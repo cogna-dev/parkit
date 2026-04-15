@@ -16,7 +16,7 @@
 /// A JSON value, as described by ECMA-404.
 ///
 /// References: https://ecma-international.org/publications-and-standards/standards/ecma-404/
-pub enum JsonValue {
+pub(all) enum JsonValue {
   /// JSON null
   Null
   /// JSON true / false
@@ -99,8 +99,8 @@ pub impl Eq for JsonValue with equal(self, other) {
 
 ///|
 /// Skip JSON whitespace (space, tab, newline, carriage return).
-fn json_ws() -> @parsec.Parser[String] {
-  @parsec.multispace0()
+fn json_ws() -> @nom.Parser[String] {
+  @nom.multispace0()
 }
 
 // ---------------------------------------------------------------------------
@@ -121,9 +121,9 @@ fn hex_digit_value(c : Char) -> Int {
 
 ///|
 /// Parse exactly 4 hex digits and return the codepoint value (0–65535).
-fn hex4() -> @parsec.Parser[Int] {
-  @parsec.map(
-    @parsec.take_while_m_n(4, 4, @parsec.is_hex_digit),
+fn hex4() -> @nom.Parser[Int] {
+  @nom.map(
+    @nom.take_while_m_n(4, 4, @nom.is_hex_digit),
     fn(s) {
       let mut v = 0
       for c in s {
@@ -136,29 +136,29 @@ fn hex4() -> @parsec.Parser[Int] {
 
 ///|
 /// Parse a JSON string escape sequence (the character after the leading `\`).
-fn json_escape() -> @parsec.Parser[String] {
-  @parsec.Parser::new(fn(input) {
+fn json_escape() -> @nom.Parser[String] {
+  @nom.Parser::new(fn(input) {
     if input.length() == 0 {
-      return Err(@parsec.ParseError::new(input, "expected escape sequence"))
+      return Err(@nom.ParseError::new(input, "expected escape sequence"))
     }
-    match input.unsafe_char_at(0) {
-      '"' => Ok((input.substring(start=1), "\""))
-      '\\' => Ok((input.substring(start=1), "\\"))
-      '/' => Ok((input.substring(start=1), "/"))
-      'b' => Ok((input.substring(start=1), "\b"))
-      'f' => Ok((input.substring(start=1), "\u{000C}"))
-      'n' => Ok((input.substring(start=1), "\n"))
-      'r' => Ok((input.substring(start=1), "\r"))
-      't' => Ok((input.substring(start=1), "\t"))
+    match input.get_char(0).unwrap() {
+      '"' => Ok((input[1:].to_string(), "\""))
+      '\\' => Ok((input[1:].to_string(), "\\"))
+      '/' => Ok((input[1:].to_string(), "/"))
+      'b' => Ok((input[1:].to_string(), "\b"))
+      'f' => Ok((input[1:].to_string(), "\u{000C}"))
+      'n' => Ok((input[1:].to_string(), "\n"))
+      'r' => Ok((input[1:].to_string(), "\r"))
+      't' => Ok((input[1:].to_string(), "\t"))
       'u' =>
-        match hex4().parse(input.substring(start=1)) {
+        match hex4().parse(input[1:].to_string()) {
           Ok((rest, cp)) =>
             Ok((rest, String::make(1, cp.unsafe_to_char())))
           Err(e) => Err(e)
         }
       c =>
         Err(
-          @parsec.ParseError::new(
+          @nom.ParseError::new(
             input,
             "unknown escape '\\" + String::make(1, c) + "'",
           ),
@@ -170,20 +170,20 @@ fn json_escape() -> @parsec.Parser[String] {
 ///|
 /// Parse the contents of a JSON string (between the outer quotes).
 /// Called after the opening `"` has been consumed.
-fn json_string_inner() -> @parsec.Parser[String] {
-  @parsec.Parser::new(fn(input) {
+fn json_string_inner() -> @nom.Parser[String] {
+  @nom.Parser::new(fn(input) {
     let buf = StringBuilder::new()
     let mut rest = input
     while true {
       if rest.length() == 0 {
-        return Err(@parsec.ParseError::new(input, "unterminated string"))
+        return Err(@nom.ParseError::new(input, "unterminated string"))
       }
-      let c = rest.unsafe_char_at(0)
+      let c = rest.get_char(0).unwrap()
       if c == '"' {
         // end of string — consume the closing quote
-        return Ok((rest.substring(start=1), buf.to_string()))
+        return Ok((rest[1:].to_string(), buf.to_string()))
       } else if c == '\\' {
-        match json_escape().parse(rest.substring(start=1)) {
+        match json_escape().parse(rest[1:].to_string()) {
           Ok((rest2, escaped)) => {
             buf.write_string(escaped)
             rest = rest2
@@ -192,25 +192,25 @@ fn json_string_inner() -> @parsec.Parser[String] {
         }
       } else if c.to_int() < 0x20 {
         return Err(
-          @parsec.ParseError::new(
+          @nom.ParseError::new(
             rest,
             "unescaped control character in string",
           ),
         )
       } else {
         buf.write_char(c)
-        rest = rest.substring(start=1)
+        rest = rest[1:].to_string()
       }
     }
     // unreachable — loop always returns
-    Err(@parsec.ParseError::new(input, "unterminated string"))
+    Err(@nom.ParseError::new(input, "unterminated string"))
   })
 }
 
 ///|
 /// Parse a JSON string value (including the surrounding quotes).
-fn json_string_parser() -> @parsec.Parser[String] {
-  @parsec.preceded(@parsec.char_('"'), json_string_inner())
+fn json_string_parser() -> @nom.Parser[String] {
+  @nom.preceded(@nom.char_('"'), json_string_inner())
 }
 
 // ---------------------------------------------------------------------------
@@ -219,21 +219,21 @@ fn json_string_parser() -> @parsec.Parser[String] {
 
 ///|
 /// Parse a JSON value.
-pub fn parse_value() -> @parsec.Parser[JsonValue] {
-  @parsec.Parser::new(fn(input) { parse_value_impl(input) })
+pub fn parse_value() -> @nom.Parser[JsonValue] {
+  @nom.Parser::new(fn(input) { parse_value_impl(input) })
 }
 
 ///|
-fn parse_value_impl(input : String) -> @parsec.IResult[JsonValue] {
+fn parse_value_impl(input : String) -> @nom.IResult[JsonValue] {
   // skip leading whitespace
   let input = match json_ws().parse(input) {
     Ok((rest, _)) => rest
     Err(_) => input
   }
   if input.length() == 0 {
-    return Err(@parsec.ParseError::new(input, "unexpected end of input"))
+    return Err(@nom.ParseError::new(input, "unexpected end of input"))
   }
-  match input.unsafe_char_at(0) {
+  match input.get_char(0).unwrap() {
     '"' =>
       match json_string_parser().parse(input) {
         Ok((rest, s)) => Ok((rest, Str(s)))
@@ -242,29 +242,29 @@ fn parse_value_impl(input : String) -> @parsec.IResult[JsonValue] {
     '[' => parse_array_impl(input)
     '{' => parse_object_impl(input)
     't' =>
-      match @parsec.tag("true").parse(input) {
+      match @nom.tag("true").parse(input) {
         Ok((rest, _)) => Ok((rest, Bool(true)))
         Err(e) => Err(e)
       }
     'f' =>
-      match @parsec.tag("false").parse(input) {
+      match @nom.tag("false").parse(input) {
         Ok((rest, _)) => Ok((rest, Bool(false)))
         Err(e) => Err(e)
       }
     'n' =>
-      match @parsec.tag("null").parse(input) {
+      match @nom.tag("null").parse(input) {
         Ok((rest, _)) => Ok((rest, Null))
         Err(e) => Err(e)
       }
     _ =>
-      match @parsec.double().parse(input) {
+      match @nom.double().parse(input) {
         Ok((rest, n)) => Ok((rest, Number(n)))
         Err(_) =>
           Err(
-            @parsec.ParseError::new(
+            @nom.ParseError::new(
               input,
               "unexpected character '" +
-              String::make(1, input.unsafe_char_at(0)) +
+              String::make(1, input.get_char(0).unwrap()) +
               "'",
             ),
           )
@@ -273,9 +273,9 @@ fn parse_value_impl(input : String) -> @parsec.IResult[JsonValue] {
 }
 
 ///|
-fn parse_array_impl(input : String) -> @parsec.IResult[JsonValue] {
+fn parse_array_impl(input : String) -> @nom.IResult[JsonValue] {
   // consume '['
-  let rest = match @parsec.char_('[').parse(input) {
+  let rest = match @nom.char_('[').parse(input) {
     Ok((r, _)) => r
     Err(e) => return Err(e)
   }
@@ -285,8 +285,8 @@ fn parse_array_impl(input : String) -> @parsec.IResult[JsonValue] {
     Err(_) => rest
   }
   // empty array?
-  if rest.length() > 0 && rest.unsafe_char_at(0) == ']' {
-    return Ok((rest.substring(start=1), Array([])))
+  if rest.length() > 0 && rest.get_char(0).unwrap() == ']' {
+    return Ok((rest[1:].to_string(), Array([])))
   }
   let items : Array[JsonValue] = []
   // parse first element
@@ -305,18 +305,18 @@ fn parse_array_impl(input : String) -> @parsec.IResult[JsonValue] {
       Err(_) => remaining
     }
     if r.length() == 0 {
-      return Err(@parsec.ParseError::new(r, "unclosed array"))
+      return Err(@nom.ParseError::new(r, "unclosed array"))
     }
-    if r.unsafe_char_at(0) == ']' {
-      remaining = r.substring(start=1)
+    if r.get_char(0).unwrap() == ']' {
+      remaining = r[1:].to_string()
       break
     }
-    if r.unsafe_char_at(0) != ',' {
+    if r.get_char(0).unwrap() != ',' {
       return Err(
-        @parsec.ParseError::new(r, "expected ',' or ']' in array"),
+        @nom.ParseError::new(r, "expected ',' or ']' in array"),
       )
     }
-    let after_comma = r.substring(start=1)
+    let after_comma = r[1:].to_string()
     match parse_value_impl(after_comma) {
       Ok((r2, v)) => {
         items.push(v)
@@ -329,9 +329,9 @@ fn parse_array_impl(input : String) -> @parsec.IResult[JsonValue] {
 }
 
 ///|
-fn parse_object_impl(input : String) -> @parsec.IResult[JsonValue] {
+fn parse_object_impl(input : String) -> @nom.IResult[JsonValue] {
   // consume '{'
-  let rest = match @parsec.char_('{').parse(input) {
+  let rest = match @nom.char_('{').parse(input) {
     Ok((r, _)) => r
     Err(e) => return Err(e)
   }
@@ -340,8 +340,8 @@ fn parse_object_impl(input : String) -> @parsec.IResult[JsonValue] {
     Err(_) => rest
   }
   // empty object?
-  if rest.length() > 0 && rest.unsafe_char_at(0) == '}' {
-    return Ok((rest.substring(start=1), Object([])))
+  if rest.length() > 0 && rest.get_char(0).unwrap() == '}' {
+    return Ok((rest[1:].to_string(), Object([])))
   }
   let pairs : Array[(String, JsonValue)] = []
   // parse first key-value pair
@@ -359,18 +359,18 @@ fn parse_object_impl(input : String) -> @parsec.IResult[JsonValue] {
       Err(_) => remaining
     }
     if r.length() == 0 {
-      return Err(@parsec.ParseError::new(r, "unclosed object"))
+      return Err(@nom.ParseError::new(r, "unclosed object"))
     }
-    if r.unsafe_char_at(0) == '}' {
-      remaining = r.substring(start=1)
+    if r.get_char(0).unwrap() == '}' {
+      remaining = r[1:].to_string()
       break
     }
-    if r.unsafe_char_at(0) != ',' {
+    if r.get_char(0).unwrap() != ',' {
       return Err(
-        @parsec.ParseError::new(r, "expected ',' or '}' in object"),
+        @nom.ParseError::new(r, "expected ',' or '}' in object"),
       )
     }
-    let after_comma = r.substring(start=1)
+    let after_comma = r[1:].to_string()
     match parse_kv_pair(after_comma) {
       Ok((r2, kv)) => {
         pairs.push(kv)
@@ -385,7 +385,7 @@ fn parse_object_impl(input : String) -> @parsec.IResult[JsonValue] {
 ///|
 fn parse_kv_pair(
   input : String
-) -> @parsec.IResult[(String, JsonValue)] {
+) -> @nom.IResult[(String, JsonValue)] {
   let input = match json_ws().parse(input) {
     Ok((r, _)) => r
     Err(_) => input
@@ -398,7 +398,7 @@ fn parse_kv_pair(
     Ok((r, _)) => r
     Err(_) => rest
   }
-  let rest = match @parsec.char_(':').parse(rest) {
+  let rest = match @nom.char_(':').parse(rest) {
     Ok((r, _)) => r
     Err(e) => return Err(e)
   }
@@ -412,7 +412,7 @@ fn parse_kv_pair(
 /// Parse a complete JSON text (a single JSON value).
 ///
 /// Returns `Ok(JsonValue)` or `Err(ParseError)`.
-pub fn parse(input : String) -> Result[JsonValue, @parsec.ParseError] {
+pub fn parse(input : String) -> Result[JsonValue, @nom.ParseError] {
   match parse_value().parse(input) {
     Ok((rest, value)) => {
       // Ensure all input was consumed (ignoring trailing whitespace)
@@ -421,7 +421,7 @@ pub fn parse(input : String) -> Result[JsonValue, @parsec.ParseError] {
         Err(_) => rest
       }
       if rest.length() > 0 {
-        Err(@parsec.ParseError::new(rest, "unexpected trailing input"))
+        Err(@nom.ParseError::new(rest, "unexpected trailing input"))
       } else {
         Ok(value)
       }

@@ -68,7 +68,7 @@ test (b : @bench.T) {
 ///|
 /// Benchmark: match an exact string tag.
 test (b : @bench.T) {
-  let p = @parsec.tag("hello")
+  let p = @nom.tag("hello")
   let input = "hello world"
   b.bench(name="tag", fn() { b.keep(p.parse(input)) })
 }
@@ -76,7 +76,7 @@ test (b : @bench.T) {
 ///|
 /// Benchmark: parse digits with take_while1.
 test (b : @bench.T) {
-  let p = @parsec.take_while1(@parsec.is_digit)
+  let p = @nom.take_while1(@nom.is_digit)
   let input = "1234567890rest"
   b.bench(name="take_while1_digits", fn() { b.keep(p.parse(input)) })
 }
@@ -84,7 +84,7 @@ test (b : @bench.T) {
 ///|
 /// Benchmark: parse a comma-separated list of numbers.
 test (b : @bench.T) {
-  let p = @parsec.separated_list0(@parsec.tag(","), @parsec.digit1())
+  let p = @nom.separated_list0(@nom.tag(","), @nom.digit1())
   let input = "1,22,333,4444,55555"
   b.bench(name="separated_list0", fn() { b.keep(p.parse(input)) })
 }

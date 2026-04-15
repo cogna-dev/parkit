@@ -1,11 +1,11 @@
 {
   "import": [
     {
-      "path": "cogna-dev/parsec/lib",
-      "alias": "parsec"
+      "path": "cogna-dev/parskit/nom",
+      "alias": "nom"
     },
     {
-      "path": "cogna-dev/parsec/json",
+      "path": "cogna-dev/parskit/json",
       "alias": "json"
     },
     {

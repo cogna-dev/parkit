@@ -48,7 +48,7 @@ pub impl Eq for ParseError with equal(self, other) {
 /// On failure: `Err(ParseError)`
 ///
 /// This mirrors nom's `IResult<I, O, E>` with `I = String`, `E = ParseError`.
-pub typealias IResult[O] = Result[(String, O), ParseError]
+pub type IResult[O] = Result[(String, O), ParseError]
 
 ///|
 /// Internal helper: convert an ASCII digit char to its numeric value.
@@ -95,8 +95,8 @@ pub fn Parser::parse[O](self : Parser[O], input : String) -> IResult[O] {
 pub fn tag(tag_str : String) -> Parser[String] {
   Parser::new(fn(input) {
     let tlen = tag_str.length()
-    if input.length() >= tlen && input.substring(start=0, end=tlen) == tag_str {
-      Ok((input.substring(start=tlen), tag_str))
+    if input.length() >= tlen && input[0:tlen] == tag_str {
+      Ok((input[tlen:].to_string(), tag_str))
     } else {
       Err(ParseError::new(input, "expected \"" + tag_str + "\""))
     }
@@ -112,9 +112,9 @@ pub fn satisfy(pred : (Char) -> Bool) -> Parser[Char] {
     if input.length() == 0 {
       return Err(ParseError::new(input, "unexpected end of input"))
     }
-    let c = input.unsafe_char_at(0)
+    let c = input.get_char(0).unwrap()
     if pred(c) {
-      Ok((input.substring(start=1), c))
+      Ok((input[1:].to_string(), c))
     } else {
       Err(
         ParseError::new(
@@ -149,10 +149,10 @@ pub fn take_while(pred : (Char) -> Bool) -> Parser[String] {
   Parser::new(fn(input) {
     let mut end = 0
     let len = input.length()
-    while end < len && pred(input.unsafe_char_at(end)) {
+    while end < len && pred(input.get_char(end).unwrap()) {
       end = end + 1
     }
-    Ok((input.substring(start=end), input.substring(start=0, end=end)))
+    Ok((input[end:].to_string(), input[0:end].to_string()))
   })
 }
 
@@ -162,15 +162,15 @@ pub fn take_while(pred : (Char) -> Bool) -> Parser[String] {
 /// Equivalent to nom's `take_while1`.
 pub fn take_while1(pred : (Char) -> Bool) -> Parser[String] {
   Parser::new(fn(input) {
-    if input.length() == 0 || !pred(input.unsafe_char_at(0)) {
+    if input.length() == 0 || !pred(input.get_char(0).unwrap()) {
       return Err(ParseError::new(input, "take_while1: no matching characters"))
     }
     let mut end = 1
     let len = input.length()
-    while end < len && pred(input.unsafe_char_at(end)) {
+    while end < len && pred(input.get_char(end).unwrap()) {
       end = end + 1
     }
-    Ok((input.substring(start=end), input.substring(start=0, end=end)))
+    Ok((input[end:].to_string(), input[0:end].to_string()))
   })
 }
 
@@ -192,7 +192,7 @@ pub fn take(n : Int) -> Parser[String] {
         ),
       )
     } else {
-      Ok((input.substring(start=n), input.substring(start=0, end=n)))
+      Ok((input[n:].to_string(), input[0:n].to_string()))
     }
   })
 }
@@ -209,7 +209,7 @@ pub fn take_while_m_n(
   Parser::new(fn(input) {
     let len = input.length()
     let mut end = 0
-    while end < len && end < n && pred(input.unsafe_char_at(end)) {
+    while end < len && end < n && pred(input.get_char(end).unwrap()) {
       end = end + 1
     }
     if end < m {
@@ -223,7 +223,7 @@ pub fn take_while_m_n(
         ),
       )
     } else {
-      Ok((input.substring(start=end), input.substring(start=0, end=end)))
+      Ok((input[end:].to_string(), input[0:end].to_string()))
     }
   })
 }
@@ -718,64 +718,64 @@ pub fn double() -> Parser[Double] {
     let mut pos = 0
     let len = input.length()
     // optional minus
-    let sign = if pos < len && input.unsafe_char_at(pos) == '-' {
+    let sign = if pos < len && input.get_char(pos).unwrap() == '-' {
       pos = pos + 1
       -1.0
     } else {
       1.0
     }
     // integer part (required)
-    if pos >= len || !is_digit(input.unsafe_char_at(pos)) {
+    if pos >= len || !is_digit(input.get_char(pos).unwrap()) {
       return Err(ParseError::new(input, "double: expected digit"))
     }
     let int_start = pos
-    while pos < len && is_digit(input.unsafe_char_at(pos)) {
+    while pos < len && is_digit(input.get_char(pos).unwrap()) {
       pos = pos + 1
     }
-    let int_str = input.substring(start=int_start, end=pos)
+    let int_str = input[int_start:pos].to_string()
     // optional fractional part
-    let frac_str = if pos < len && input.unsafe_char_at(pos) == '.' {
+    let frac_str = if pos < len && input.get_char(pos).unwrap() == '.' {
       pos = pos + 1
-      if pos >= len || !is_digit(input.unsafe_char_at(pos)) {
+      if pos >= len || !is_digit(input.get_char(pos).unwrap()) {
         return Err(
           ParseError::new(input, "double: expected digit after decimal point"),
         )
       }
       let frac_start = pos
-      while pos < len && is_digit(input.unsafe_char_at(pos)) {
+      while pos < len && is_digit(input.get_char(pos).unwrap()) {
         pos = pos + 1
       }
-      input.substring(start=frac_start, end=pos)
+      input[frac_start:pos].to_string()
     } else {
       ""
     }
     // optional exponent
     let (exp_sign, exp_str) = if pos < len &&
-      (input.unsafe_char_at(pos) == 'e' || input.unsafe_char_at(pos) == 'E') {
+      (input.get_char(pos).unwrap() == 'e' || input.get_char(pos).unwrap() == 'E') {
       pos = pos + 1
-      let esign = if pos < len && input.unsafe_char_at(pos) == '+' {
+      let esign = if pos < len && input.get_char(pos).unwrap() == '+' {
         pos = pos + 1
         1
-      } else if pos < len && input.unsafe_char_at(pos) == '-' {
+      } else if pos < len && input.get_char(pos).unwrap() == '-' {
         pos = pos + 1
         -1
       } else {
         1
       }
-      if pos >= len || !is_digit(input.unsafe_char_at(pos)) {
+      if pos >= len || !is_digit(input.get_char(pos).unwrap()) {
         return Err(
           ParseError::new(input, "double: expected digit in exponent"),
         )
       }
       let exp_start = pos
-      while pos < len && is_digit(input.unsafe_char_at(pos)) {
+      while pos < len && is_digit(input.get_char(pos).unwrap()) {
         pos = pos + 1
       }
-      (esign, input.substring(start=exp_start, end=pos))
+      (esign, input[exp_start:pos].to_string())
     } else {
       (1, "")
     }
-    let rest = input.substring(start=pos)
+    let rest = input[pos:].to_string()
     Ok((rest, compute_double(sign, int_str, frac_str, exp_sign, exp_str)))
   })
 }

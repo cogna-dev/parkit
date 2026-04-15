@@ -1,8 +1,8 @@
 {
   "import": [
     {
-      "path": "cogna-dev/parsec/lib",
-      "alias": "parsec"
+      "path": "cogna-dev/parskit/nom",
+      "alias": "nom"
     }
   ]
 }

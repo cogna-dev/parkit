@@ -7,8 +7,8 @@ on:
     branches: [main, master]
 
 jobs:
-  test:
-    name: Build and Test
+  moonbit:
+    name: Build and Test (MoonBit)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,3 +29,15 @@ jobs:
 
       - name: Test
         run: moon test
+
+  rust-reference:
+    name: Rust nom reference tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test reference/nom-json
+        run: cargo test --manifest-path reference/nom-json/Cargo.toml

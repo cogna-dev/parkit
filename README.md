@@ -1,33 +1,36 @@
-# parsec
+# parskit
 
 A nom-like parser combinator framework for [MoonBit](https://www.moonbitlang.com/), inspired by Rust's [nom](https://github.com/rust-bakery/nom).
 
-[![CI](https://github.com/cogna-dev/parsec/actions/workflows/ci.yml/badge.svg)](https://github.com/cogna-dev/parsec/actions/workflows/ci.yml)
+[![CI](https://github.com/cogna-dev/parskit/actions/workflows/ci.yml/badge.svg)](https://github.com/cogna-dev/parskit/actions/workflows/ci.yml)
 
 ## Features
 
 - **Same API as Rust nom** — `tag`, `take_while`, `many0`, `many1`, `alt`, `pair`, `preceded`, `terminated`, `delimited`, `opt`, `verify`, `map`, `map_res`, `separated_list0/1`, and more
 - **JSON parser sample** — a full [ECMA-404](https://ecma-international.org/publications-and-standards/standards/ecma-404/) compliant JSON parser built with the framework
+- **Rust nom reference tests** — the same JSON test cases run against Rust nom, proving identical results
 - **MoonBit benchmarks** — performance benchmarks using MoonBit's built-in benchmark runner
 
 ## Project layout
 
 ```
 src/
-  lib/        — the parsec parser combinator library
-  json/       — JSON parser built with parsec (sample)
+  nom/        — the parskit parser combinator library (cogna-dev/parskit/nom)
+  json/       — JSON parser built with parskit (cogna-dev/parskit/json)
   benchmark/  — MoonBit benchmarks
+reference/
+  nom-json/   — Rust nom reference JSON parser (cross-language validation)
 ```
 
 ## Quick start
 
 ```moonbit
 // Tag: match an exact string
-let p = @parsec.tag("hello")
+let p = @nom.tag("hello")
 assert_eq!(p.parse("hello world"), Ok((" world", "hello")))
 
 // many0: repeat zero or more times
-let nums = @parsec.many0(@parsec.digit1())
+let nums = @nom.many0(@nom.digit1())
 assert_eq!(nums.parse("123 456"), Ok((" 456", ["123"])))
 
 // JSON parsing
@@ -45,6 +48,29 @@ moon test
 
 ```bash
 moon bench
+```
+
+## Benchmark results
+
+Measured on a standard GitHub Actions `ubuntu-latest` runner (MoonBit wasm-gc backend):
+
+| Benchmark | Mean | σ | Range |
+|---|---|---|---|
+| `json_parse` (3-object array) | 431.20 µs | ±12.37 µs | 419.66 µs … 452.99 µs |
+| `tag` | 0.05 µs | ±0.00 µs | 0.05 µs … 0.05 µs |
+| `take_while1_digits` | 0.11 µs | ±0.00 µs | 0.11 µs … 0.11 µs |
+| `separated_list0` | 0.65 µs | ±0.00 µs | 0.65 µs … 0.65 µs |
+
+## Reference testing (Rust nom)
+
+`reference/nom-json/` contains an equivalent JSON parser built with Rust
+[nom 8](https://docs.rs/nom). The test suite in
+`reference/nom-json/src/lib.rs` mirrors every case in
+`src/json/json_test.mbt`, ensuring both implementations produce the same
+result for every input.
+
+```bash
+cargo test --manifest-path reference/nom-json/Cargo.toml
 ```
 
 ## Core combinators
