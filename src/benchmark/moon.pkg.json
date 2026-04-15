@@ -1,0 +1,16 @@
+{
+  "import": [
+    {
+      "path": "cogna-dev/parsec/lib",
+      "alias": "parsec"
+    },
+    {
+      "path": "cogna-dev/parsec/json",
+      "alias": "json"
+    },
+    {
+      "path": "moonbitlang/core/bench",
+      "alias": "bench"
+    }
+  ]
+}

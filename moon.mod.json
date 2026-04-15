@@ -1,0 +1,10 @@
+{
+  "name": "cogna-dev/parsec",
+  "version": "0.1.0",
+  "readme": "README.md",
+  "repository": "https://github.com/cogna-dev/parsec",
+  "license": "Apache-2.0",
+  "keywords": ["parser", "combinator", "nom", "json"],
+  "description": "A nom-like parser combinator framework for MoonBit",
+  "source": "src"
+}

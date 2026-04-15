@@ -1,0 +1,8 @@
+{
+  "import": [
+    {
+      "path": "cogna-dev/parsec/lib",
+      "alias": "parsec"
+    }
+  ]
+}
