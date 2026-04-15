@@ -1,7 +1,7 @@
 {
   "import": [
     {
-      "path": "cogna-dev/parskit/nom",
+      "path": "cogna-dev/parkit/nom",
       "alias": "nom"
     }
   ]

@@ -1,8 +1,8 @@
-# parskit
+# parkit
 
 A nom-like parser combinator framework for [MoonBit](https://www.moonbitlang.com/), inspired by Rust's [nom](https://github.com/rust-bakery/nom).
 
-[![CI](https://github.com/cogna-dev/parskit/actions/workflows/ci.yml/badge.svg)](https://github.com/cogna-dev/parskit/actions/workflows/ci.yml)
+[![CI](https://github.com/cogna-dev/parkit/actions/workflows/ci.yml/badge.svg)](https://github.com/cogna-dev/parkit/actions/workflows/ci.yml)
 
 ## Features
 
@@ -10,16 +10,17 @@ A nom-like parser combinator framework for [MoonBit](https://www.moonbitlang.com
 - **JSON parser sample** — a full [ECMA-404](https://ecma-international.org/publications-and-standards/standards/ecma-404/) compliant JSON parser built with the framework
 - **Rust nom reference tests** — the same JSON test cases run against Rust nom, proving identical results
 - **MoonBit benchmarks** — performance benchmarks using MoonBit's built-in benchmark runner
+- **Rust criterion benchmarks** — performance comparison with a native Rust nom implementation
 
 ## Project layout
 
 ```
 src/
-  nom/        — the parskit parser combinator library (cogna-dev/parskit/nom)
-  json/       — JSON parser built with parskit (cogna-dev/parskit/json)
+  nom/        — the parkit parser combinator library (cogna-dev/parkit/nom)
+  json/       — JSON parser built with parkit (cogna-dev/parkit/json)
   benchmark/  — MoonBit benchmarks
 reference/
-  nom-json/   — Rust nom reference JSON parser (cross-language validation)
+  nom-json/   — Rust nom reference JSON parser (cross-language validation + benchmarks)
 ```
 
 ## Quick start
@@ -47,19 +48,26 @@ moon test
 ## Running benchmarks
 
 ```bash
+# MoonBit benchmarks (moon bench)
 moon bench
+
+# Rust criterion benchmarks
+cargo bench --manifest-path reference/nom-json/Cargo.toml
 ```
 
 ## Benchmark results
 
-Measured on a standard GitHub Actions `ubuntu-latest` runner (MoonBit wasm-gc backend):
+Benchmarks run on `ubuntu-latest`. MoonBit targets the wasm-gc backend; Rust
+uses [criterion.rs](https://github.com/bheisler/criterion.rs) with the native
+release build. The input is the same 3-object JSON array used in both suites.
 
-| Benchmark | Mean | σ | Range |
-|---|---|---|---|
-| `json_parse` (3-object array) | 431.20 µs | ±12.37 µs | 419.66 µs … 452.99 µs |
-| `tag` | 0.05 µs | ±0.00 µs | 0.05 µs … 0.05 µs |
-| `take_while1_digits` | 0.11 µs | ±0.00 µs | 0.11 µs … 0.11 µs |
-| `separated_list0` | 0.65 µs | ±0.00 µs | 0.65 µs … 0.65 µs |
+| Benchmark | MoonBit (wasm-gc) | Rust nom (native) |
+|---|---|---|
+| `json_parse` (3-object array) | 431.20 µs | 5.53 µs |
+
+> **Note:** MoonBit compiles to wasm-gc and runs in a wasm runtime; the
+> difference reflects runtime overhead rather than algorithmic differences.
+> Both parsers implement the same combinator logic and produce identical results.
 
 ## Reference testing (Rust nom)
 
@@ -112,7 +120,8 @@ cargo test --manifest-path reference/nom-json/Cargo.toml
 
 1. [ECMA-404 JSON specification](https://ecma-international.org/publications-and-standards/standards/ecma-404/)
 2. [nom — Rust parser combinator library](https://github.com/rust-bakery/nom)
-3. [MoonBit benchmarks documentation](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)
+3. [criterion.rs — Rust benchmarking library](https://github.com/bheisler/criterion.rs)
+4. [MoonBit benchmarks documentation](https://docs.moonbitlang.com/en/latest/language/benchmarks.html)
 
 ## License
 

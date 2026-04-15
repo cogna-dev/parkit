@@ -1,8 +1,8 @@
 {
-  "name": "cogna-dev/parskit",
+  "name": "cogna-dev/parkit",
   "version": "0.1.0",
   "readme": "README.md",
-  "repository": "https://github.com/cogna-dev/parskit",
+  "repository": "https://github.com/cogna-dev/parkit",
   "license": "Apache-2.0",
   "keywords": ["parser", "combinator", "nom", "json"],
   "description": "A nom-like parser combinator framework for MoonBit",
