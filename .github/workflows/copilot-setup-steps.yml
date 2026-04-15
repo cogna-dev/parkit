@@ -22,6 +22,4 @@ jobs:
           submodules: recursive
 
       - name: Setup MoonBit
-        uses: hustcer/setup-moonbit@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: cogna-dev/moonbit-actions/setup@v0

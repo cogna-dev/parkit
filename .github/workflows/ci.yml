@@ -18,5 +18,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: MoonBit CI
-        uses: cogna-dev/moonbit-actions@main
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Check
+        run: moon check
+
+      - name: Build
+        run: moon build
+
+      - name: Test
+        run: moon test
