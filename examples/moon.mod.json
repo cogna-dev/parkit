@@ -1,0 +1,10 @@
+{
+  "name": "cogna-dev/parkit-examples",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "description": "JSON parser sample and benchmarks for cogna-dev/parkit",
+  "source": ".",
+  "deps": {
+    "cogna-dev/parkit": "0.1.0"
+  }
+}

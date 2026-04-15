@@ -1,0 +1,3 @@
+[workspace]
+members = ["reference/nom-json"]
+resolver = "2"

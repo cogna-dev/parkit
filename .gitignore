@@ -1,0 +1,7 @@
+# MoonBit build artifacts
+_build/
+.mooncakes/
+
+# Rust build artifacts
+target/
+Cargo.lock

@@ -1,0 +1,8 @@
+{
+  "import": [
+    {
+      "path": "cogna-dev/parkit/nom",
+      "alias": "nom"
+    }
+  ]
+}

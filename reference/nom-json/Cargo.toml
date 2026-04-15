@@ -1,0 +1,16 @@
+[package]
+name = "nom-json"
+version = "0.1.0"
+edition = "2024"
+description = "Reference JSON parser using Rust nom, for cross-language result validation"
+license = "Apache-2.0"
+
+[dependencies]
+nom = "8.0.0"
+
+[dev-dependencies]
+criterion = { version = "0.8.2", features = ["html_reports"] }
+
+[[bench]]
+name = "json_bench"
+harness = false

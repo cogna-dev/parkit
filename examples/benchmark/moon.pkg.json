@@ -1,0 +1,16 @@
+{
+  "import": [
+    {
+      "path": "cogna-dev/parkit/nom",
+      "alias": "nom"
+    },
+    {
+      "path": "cogna-dev/parkit-examples/json",
+      "alias": "json"
+    },
+    {
+      "path": "moonbitlang/core/bench",
+      "alias": "bench"
+    }
+  ]
+}
