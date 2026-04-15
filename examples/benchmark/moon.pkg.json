@@ -5,7 +5,7 @@
       "alias": "nom"
     },
     {
-      "path": "cogna-dev/parkit/json",
+      "path": "cogna-dev/parkit-examples/json",
       "alias": "json"
     },
     {

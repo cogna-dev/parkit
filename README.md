@@ -9,18 +9,19 @@ A nom-like parser combinator framework for [MoonBit](https://www.moonbitlang.com
 - **Same API as Rust nom** — `tag`, `take_while`, `many0`, `many1`, `alt`, `pair`, `preceded`, `terminated`, `delimited`, `opt`, `verify`, `map`, `map_res`, `separated_list0/1`, and more
 - **JSON parser sample** — a full [ECMA-404](https://ecma-international.org/publications-and-standards/standards/ecma-404/) compliant JSON parser built with the framework
 - **Rust nom reference tests** — the same JSON test cases run against Rust nom, proving identical results
-- **MoonBit benchmarks** — performance benchmarks using MoonBit's built-in benchmark runner
+- **MoonBit benchmarks** — performance benchmarks using MoonBit's built-in benchmark runner (native target)
 - **Rust criterion benchmarks** — performance comparison with a native Rust nom implementation
 
 ## Project layout
 
 ```
 src/
-  nom/        — the parkit parser combinator library (cogna-dev/parkit/nom)
-  json/       — JSON parser built with parkit (cogna-dev/parkit/json)
-  benchmark/  — MoonBit benchmarks
+  nom/            — the parkit parser combinator library (cogna-dev/parkit/nom)
+examples/
+  json/           — JSON parser sample built with parkit (not published to mooncakes)
+  benchmark/      — MoonBit benchmarks (not published to mooncakes)
 reference/
-  nom-json/   — Rust nom reference JSON parser (cross-language validation + benchmarks)
+  nom-json/       — Rust nom reference JSON parser (cross-language validation + benchmarks)
 ```
 
 ## Quick start
@@ -42,14 +43,14 @@ let json = @json.parse("{\"key\": 42}")
 ## Running tests
 
 ```bash
-moon test
+moon test --manifest-path moon.work.json
 ```
 
 ## Running benchmarks
 
 ```bash
-# MoonBit benchmarks (moon bench)
-moon bench
+# MoonBit benchmarks (native target)
+moon bench --manifest-path moon.work.json --target native
 
 # Rust criterion benchmarks
 cargo bench --manifest-path reference/nom-json/Cargo.toml
@@ -57,24 +58,34 @@ cargo bench --manifest-path reference/nom-json/Cargo.toml
 
 ## Benchmark results
 
-Benchmarks run on `ubuntu-latest`. MoonBit targets the wasm-gc backend; Rust
-uses [criterion.rs](https://github.com/bheisler/criterion.rs) with the native
-release build. The input is the same 3-object JSON array used in both suites.
+Benchmarks run on `ubuntu-latest`. MoonBit targets the native backend; Rust
+uses [criterion.rs](https://github.com/bheisler/criterion.rs) with a native
+release build. Both use the same 3-object JSON array input.
 
-| Benchmark | MoonBit (wasm-gc) | Rust nom (native) |
+| Benchmark | MoonBit (native) | Rust nom (native) |
 |---|---|---|
-| `json_parse` (3-object array) | 431.20 µs | 5.53 µs |
+| `json_parse` (3-object array) | 1.17 ms | 5.53 µs |
 
-> **Note:** MoonBit compiles to wasm-gc and runs in a wasm runtime; the
-> difference reflects runtime overhead rather than algorithmic differences.
-> Both parsers implement the same combinator logic and produce identical results.
+> **Note:** The performance difference reflects the overhead of MoonBit's
+> runtime and memory model compared to Rust's zero-cost abstractions, not
+> algorithmic differences — both parsers implement the same combinator logic
+> and produce identical results.
+
+MoonBit native benchmark details:
+
+| Benchmark | Mean | σ | Range |
+|---|---|---|---|
+| `json_parse` (3-object array) | 1.17 ms | ±6.29 µs | 1.16 ms … 1.19 ms |
+| `tag` | 0.21 µs | ±0.00 µs | 0.21 µs … 0.21 µs |
+| `take_while1_digits` | 0.43 µs | ±0.00 µs | 0.43 µs … 0.43 µs |
+| `separated_list0` | 2.49 µs | ±0.02 µs | 2.47 µs … 2.54 µs |
 
 ## Reference testing (Rust nom)
 
 `reference/nom-json/` contains an equivalent JSON parser built with Rust
 [nom 8](https://docs.rs/nom). The test suite in
 `reference/nom-json/src/lib.rs` mirrors every case in
-`src/json/json_test.mbt`, ensuring both implementations produce the same
+`examples/json/json_test.mbt`, ensuring both implementations produce the same
 result for every input.
 
 ```bash

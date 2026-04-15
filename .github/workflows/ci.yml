@@ -22,13 +22,13 @@ jobs:
         uses: cogna-dev/moonbit-actions/setup@v0
 
       - name: Check
-        run: moon check
+        run: moon check --manifest-path moon.work.json
 
       - name: Build
-        run: moon build
+        run: moon build --manifest-path moon.work.json
 
       - name: Test
-        run: moon test
+        run: moon test --manifest-path moon.work.json
 
   rust-reference:
     name: Rust nom reference tests
