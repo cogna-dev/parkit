@@ -20,6 +20,6 @@ jobs:
         uses: cogna-dev/moonbit-actions/setup@v0
 
       - name: Publish package
-        uses: cogna-dev/moonbit-actions/publish@v0
+        uses: cogna-dev/moonbit-actions/publish@v0.1.1
         with:
           token: ${{ secrets.MOONCAKES_TOKEN }}
