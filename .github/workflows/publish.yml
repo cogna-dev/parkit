@@ -23,5 +23,4 @@ jobs:
         uses: cogna-dev/moonbit-actions/publish@v0.1.2
         with:
           token: ${{ secrets.MOONCAKES_TOKEN }}
-          dry-run: 'true'
 
