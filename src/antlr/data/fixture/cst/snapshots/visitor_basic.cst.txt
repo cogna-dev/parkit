@@ -1,0 +1,10 @@
+CST	1
+grammar	VisitorBasic	combined	s	VisitorBasic	grammar=VisitorBasic\nkind=combined\nstart_rule_id=0\nrule=0:s:parser:normal:-:-\nrule=1:A:lexer:normal:-:-\nalt=0:1:-\nalt=1:1:-\nslot=0:1:0:0:string:-:-:plain\nslot=0:1:1:1:token-ref:-:-:plain\nslot=1:1:0:0:string:-:-:plain\ntoken=0:A:-:explicit\ntoken=1:T__0:'A':implicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	1	T__0	'A'	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	1	0	0,1,0,1,1,1	A
+token	1	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	1,1,1,1,1,1	
+node	rule	0	s	VisitorBasic	1	-	0	0,1,0,1,1,1
+edge	0	1	s	1	0	0	-	literal:'A'	0	0
+edge	0	2	s	1	1	1	-	token:EOF	0	0
+node	token	1	0	1	0,1,0,1,1,1
+node	token	2	1	0	1,1,1,1,1,1

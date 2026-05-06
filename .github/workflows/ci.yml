@@ -7,8 +7,42 @@ on:
     branches: [main, master]
 
 jobs:
-  moonbit:
-    name: Build and Test (MoonBit)
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Format Check
+        run: make format-check
+
+  lint:
+    name: Static Checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Lint
+        run: make lint
+
+  moonbit-frontend-atn:
+    name: Frontend and ATN Contract (MoonBit)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,13 +56,86 @@ jobs:
         uses: cogna-dev/moonbit-actions/setup@v0
 
       - name: Check
-        run: moon check --manifest-path moon.work.json
+        run: moon check --manifest-path moon.work
 
       - name: Build
-        run: moon build --manifest-path moon.work.json
+        run: moon build --manifest-path moon.work
 
-      - name: Test
-        run: moon test --manifest-path moon.work.json
+      - name: Frontend and ATN Tests
+        run: moon test --manifest-path moon.work --package cogna-dev/parkit/antlr/core --no-render
+
+  moonbit-runtime:
+    name: Runtime Contract (MoonBit)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Runtime Tests
+        run: moon test --manifest-path moon.work --package cogna-dev/parkit/antlr/runtime --no-render
+
+  moonbit-cst:
+    name: Generic CST Contract (MoonBit)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: CST Tests
+        run: moon test --manifest-path moon.work --package cogna-dev/parkit/antlr/cst --no-render
+
+  moonbit-compatibility:
+    name: Compatibility Governance (MoonBit)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Compatibility Tests
+        run: moon test --manifest-path moon.work --package cogna-dev/parkit/antlr/testing --no-render
+
+  moonbit-workspace:
+    name: Aggregate Workspace Regression (MoonBit)
+    runs-on: ubuntu-latest
+    needs:
+      - moonbit-frontend-atn
+      - moonbit-runtime
+      - moonbit-cst
+      - moonbit-compatibility
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MoonBit
+        uses: cogna-dev/moonbit-actions/setup@v0
+
+      - name: Workspace Tests
+        run: moon test --manifest-path moon.work --no-render
 
   rust-reference:
     name: Rust nom reference tests

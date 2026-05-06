@@ -1,0 +1,8 @@
+PARSER	1
+summary	s	1	1	0	0	0	0	1
+event	enter-rule	0	0	s	-	-	-	-	0	T__0	0	0,1,0,0,1,0	-	-
+event	commit-alt	0	0	s	1	-	-	-	0	T__0	0	0,1,0,0,1,0	-	-
+event	consume-token	0	0	s	1	-	0	0	0	T__0	0	0,1,0,1,1,1	A	-
+event	consume-token	0	1	s	1	-	1	1	1	EOF	0	1,1,1,1,1,1		-
+event	exit-rule	0	1	s	-	-	-	-	1	EOF	0	0,1,0,1,1,1	-	ok
+dfa	0	0	T__0	1	1	0	2@1@0@$@0|4@0@0@$@0|5@0@1@$@0|6@0@1@$@0|7@0@1@$@0|3@0@1@$@0|1@0@1@$@0

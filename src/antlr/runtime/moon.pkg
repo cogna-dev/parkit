@@ -1,0 +1,5 @@
+import {
+  "moonbitlang/core/string" @string,
+  "cogna-dev/parkit/antlr/core" @antlr,
+  "cogna-dev/parkit/antlr/fixture" @antlr_fixture,
+}

@@ -1,0 +1,37 @@
+# status	id	upstream_path	grammar_name	expected_rule_count	left_recursive_rule_names	current_gap
+supported	maven-hello	antlr4-maven-plugin/src/test/projects/dependencyRemoved/src/main/antlr4/test/Hello.g4	Hello	3		
+supported	maven-imports-standard-hello	antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/Hello.g4	Hello	3		
+supported	maven-imports-parser	antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/TestParser.g4	TestParser	1		
+supported	maven-imports-lexer	antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/TestLexer.g4	TestLexer	2		
+supported	maven-imports-custom-hello	antlr4-maven-plugin/src/test/projects/importsCustom/src/main/antlr4/Hello.g4	Hello	3		
+supported	maven-imports-custom-parser	antlr4-maven-plugin/src/test/projects/importsCustom/src/main/antlr4/TestParser.g4	TestParser	1		
+supported	maven-imports-custom-lexer	antlr4-maven-plugin/src/test/projects/importsCustom/src/main/antlr4/TestLexer.g4	TestLexer	2		
+supported	maven-import-tokens-simple-parser	antlr4-maven-plugin/src/test/projects/importTokens/src/main/antlr4/test/SimpleParser.g4	SimpleParser	1		
+supported	python-expr	runtime/Python3/tests/expr/Expr.g4	Expr	16	expr	
+supported	swift-visitor-calc	runtime/Swift/Tests/Antlr4Tests/VisitorCalc.g4	VisitorCalc	8	expr	
+supported	maven-imports-base-lexer	antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/imports/TestBaseLexer.g4	TestBaseLexer	4		
+supported	maven-imports-base-lexer-2	antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/imports/TestBaseLexer2.g4	TestBaseLexer2	1		
+supported	csharp-arithmetic	runtime/CSharp/tests/issue-3079/Arithmetic.g4	Arithmetic	26	expression	
+supported	maven-dependency-removed-hello-base	antlr4-maven-plugin/src/test/projects/dependencyRemoved/src/main/antlr4/imports/HelloBase.g4	TestBaseLexer	5		
+supported	js-rewriter-calc	runtime/JavaScript/spec/rewriter/calc.g4	calc	7		
+supported	tool-position-adjusting-lexer	tool-testsuite/test/org/antlr/v4/test/tool/PositionAdjustingLexer.g4	PositionAdjustingLexer	9		
+supported	tool-psl	tool-testsuite/test/org/antlr/v4/test/tool/Psl.g4	Psl	57		
+supported	tool-java-lr	tool-testsuite/test/org/antlr/v4/test/tool/JavaLR.g4	JavaLR	270	expression	
+supported	tool-java	tool-testsuite/test/org/antlr/v4/test/tool/Java.g4	Java	290		
+supported	runtime-java-api	runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/Java.g4	Java	248	expression	
+supported	runtime-java-api-visitor-basic	runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/VisitorBasic.g4	VisitorBasic	2		
+supported	runtime-java-api-visitor-calc	runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/VisitorCalc.g4	VisitorCalc	8	expr	
+supported	swift-lexer-a	runtime/Swift/Tests/Antlr4Tests/LexerA.g4	LexerA	3		
+supported	js-rewriter-abc	runtime/JavaScript/spec/rewriter/abc.g4	abc	3		
+supported	swift-lexer-b	runtime/Swift/Tests/Antlr4Tests/LexerB.g4	LexerB	7		
+supported	swift-threading	runtime/Swift/Tests/Antlr4Tests/Threading.g4	Threading	8	expr	
+supported	js-rewriter-calc-lexer	runtime/JavaScript/spec/rewriter/calc.g4	calc	7		
+supported	cpp-demo-tlexer	runtime/Cpp/demo/TLexer.g4	TLexer	32		
+supported	maven-imports-custom-base-lexer	antlr4-maven-plugin/src/test/projects/importsCustom/src/main/antlr4/imports/TestBaseLexer.g4	TestBaseLexer	5		
+supported	cpp-demo-tparser	runtime/Cpp/demo/TParser.g4	TParser	13	expr	
+supported	csharp-asm8080	runtime/CSharp/tests/issue-2693/asm8080.g4	asm8080	53		
+supported	java-api-graphemes	runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/perf/graphemes.g4	graphemes	24		
+supported	python-xpath-lexer	runtime/Python3/src/antlr4/xpath/XPathLexer.g4	XPathLexer	8		
+supported	csharp-xpath-lexer	runtime/CSharp/src/Tree/Xpath/XPathLexer.g4	XPathLexer	8		
+supported	cpp-xpath-lexer	runtime/Cpp/runtime/src/tree/xpath/XPathLexer.g4	XPathLexer	8		
+supported	swift-visitor-basic	runtime/Swift/Tests/Antlr4Tests/VisitorBasic.g4	VisitorBasic	2		

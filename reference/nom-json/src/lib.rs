@@ -18,13 +18,13 @@
 //! so we can cross-check that both produce identical results for the same input.
 
 use nom::{
+    IResult, Parser,
     branch::alt,
     bytes::complete::{tag, take_while, take_while_m_n},
     character::complete::{char, multispace0},
     combinator::{map, map_res, opt, value},
     multi::separated_list0,
     sequence::{delimited, preceded, separated_pair, terminated},
-    IResult, Parser,
 };
 
 /// A JSON value, matching ECMA-404 / the MoonBit `JsonValue` enum.
@@ -155,12 +155,7 @@ fn json_array(input: &str) -> IResult<&str, Vec<JsonValue>> {
 }
 
 fn json_kv(input: &str) -> IResult<&str, (String, JsonValue)> {
-    separated_pair(
-        ws(json_string),
-        ws(char(':')),
-        json_value,
-    )
-    .parse(input)
+    separated_pair(ws(json_string), ws(char(':')), json_value).parse(input)
 }
 
 fn json_object(input: &str) -> IResult<&str, Vec<(String, JsonValue)>> {
@@ -243,10 +238,7 @@ mod tests {
 
     #[test]
     fn test_parse_string_with_unicode_escape() {
-        assert_eq!(
-            parse(r#""\u0041""#),
-            Ok(JsonValue::Str("A".to_string()))
-        );
+        assert_eq!(parse(r#""\u0041""#), Ok(JsonValue::Str("A".to_string())));
     }
 
     #[test]

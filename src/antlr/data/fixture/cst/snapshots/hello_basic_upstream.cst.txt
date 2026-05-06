@@ -1,0 +1,11 @@
+CST	1
+grammar	Hello	combined	r	Hello	grammar=Hello\nkind=combined\nstart_rule_id=0\nrule=0:r:parser:normal:-:-\nrule=1:ID:lexer:normal:-:-\nrule=2:WS:lexer:normal:-:-\nalt=0:1:-\nalt=1:1:-\nalt=2:1:-\nslot=0:1:0:0:string:-:-:plain\nslot=0:1:1:1:token-ref:-:-:plain\nslot=1:1:0:0:charset:-:one-or-more:greedy:plain\nslot=2:1:0:0:charset:-:one-or-more:greedy:plain\ntoken=0:ID:-:explicit\ntoken=1:WS:-:explicit\ntoken=2:T__0:'hello':implicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	2	T__0	'hello'	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	1	0	0,1,0,5,1,5	hello
+token	1	0	ID	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	6,1,6,9,1,9	abc
+token	2	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	9,1,9,9,1,9	
+node	rule	0	r	Hello	1	-	0	0,1,0,9,1,9
+edge	0	1	r	1	0	0	-	literal:'hello'	0	0
+edge	0	2	r	1	1	1	-	token:ID	0	0
+node	token	1	0	1	0,1,0,5,1,5
+node	token	2	1	0	6,1,6,9,1,9

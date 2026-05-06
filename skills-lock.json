@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "clean-code": {
+      "source": "yufeiminds/effective-skills",
+      "sourceType": "github",
+      "skillPath": "skills/clean-code/SKILL.md",
+      "computedHash": "9de57ad686873c7a3ac9cbeafea868169fc9b086e4f579c91874521c86cb9c03"
+    }
+  }
+}

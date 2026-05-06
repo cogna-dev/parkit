@@ -1,0 +1,28 @@
+CST	1
+grammar	Expr	combined	expr	Expr	grammar=Expr\nkind=combined\nstart_rule_id=0\nrule=0:expr:parser:normal:-:-\nrule=1:INT:lexer:normal:-:-\nrule=2:WS:lexer:normal:-:-\nalt=0:1:Add\nalt=0:2:Atom\nalt=1:1:-\nalt=2:1:-\nslot=0:1:0:0:rule-ref:-:-:plain\nslot=0:1:1:1:string:-:-:plain\nslot=0:1:2:2:rule-ref:-:-:plain\nslot=0:2:0:0:token-ref:-:-:plain\nslot=1:1:0:0:charset:-:one-or-more:greedy:plain\nslot=2:1:0:0:charset:-:one-or-more:greedy:plain\ntoken=0:INT:-:explicit\ntoken=1:WS:-:explicit\ntoken=2:T__0:'+':implicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	0,1,0,1,1,1	1
+token	1	2	T__0	'+'	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	1	0	1,1,1,2,1,2	+
+token	2	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	2,1,2,3,1,3	2
+token	3	2	T__0	'+'	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	1	0	3,1,3,4,1,4	+
+token	4	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	4,1,4,5,1,5	3
+token	5	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	5,1,5,5,1,5	
+node	rule	0	expr	Expr	1	Add	0	0,1,0,5,1,5
+edge	0	6	expr	1	0	0	-	rule:expr	0	0
+edge	0	7	expr	1	1	1	-	literal:'+'	0	0
+edge	0	8	expr	1	2	2	-	rule:expr	0	0
+node	token	1	0	0	0,1,0,1,1,1
+node	rule	2	expr	Expr	2	Atom	0	0,1,0,1,1,1
+edge	2	1	expr	2	0	0	-	token:INT	0	0
+node	token	3	1	1	1,1,1,2,1,2
+node	rule	4	expr	Expr	2	Atom	0	2,1,2,3,1,3
+edge	4	5	expr	2	0	0	-	token:INT	0	0
+node	token	5	2	0	2,1,2,3,1,3
+node	rule	6	expr	Expr	1	Add	0	0,1,0,3,1,3
+edge	6	2	expr	1	0	0	-	rule:expr	0	0
+edge	6	3	expr	1	1	1	-	literal:'+'	0	0
+edge	6	4	expr	1	2	2	-	rule:expr	0	0
+node	token	7	3	1	3,1,3,4,1,4
+node	rule	8	expr	Expr	2	Atom	0	4,1,4,5,1,5
+edge	8	9	expr	2	0	0	-	token:INT	0	0
+node	token	9	4	0	4,1,4,5,1,5

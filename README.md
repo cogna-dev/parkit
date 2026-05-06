@@ -1,23 +1,37 @@
 # parkit
 
-A nom-like parser combinator framework for [MoonBit](https://www.moonbitlang.com/), inspired by Rust's [nom](https://github.com/rust-bakery/nom).
+A MoonBit parsing toolkit for two user workflows: composing parsers with nom-like combinators, or turning `.g4` grammars into generated parseable packages.
 
 [![CI](https://github.com/cogna-dev/parkit/actions/workflows/ci.yml/badge.svg)](https://github.com/cogna-dev/parkit/actions/workflows/ci.yml)
 
-## Features
+## Highlights
 
-- **Same API as Rust nom** — `tag`, `take_while`, `many0`, `many1`, `alt`, `pair`, `preceded`, `terminated`, `delimited`, `opt`, `verify`, `map`, `map_res`, `separated_list0/1`, and more
-- **JSON parser sample** — a full [ECMA-404](https://ecma-international.org/publications-and-standards/standards/ecma-404/) compliant JSON parser built with the framework
-- **Rust nom reference tests** — the same JSON test cases run against Rust nom, proving identical results
-- **MoonBit benchmarks** — performance benchmarks using MoonBit's built-in benchmark runner (native target)
-- **Rust criterion benchmarks** — performance comparison with a native Rust nom implementation
+- **Rust nom–shaped combinators** — `tag`, `take_while`, `many0`, `many1`, `alt`, `pair`, `preceded`, `terminated`, `delimited`, `opt`, `verify`, `map`, `map_res`, `separated_list0/1`, and more
+- **ANTLR CLI workflow** — run `parkit generate antlr ./hello.g4`, import the generated package, and call `@hello.parse(...)`
+- **Evidence-driven compatibility** — repository-managed fixtures, snapshots, suite catalogs, and CI-backed contract tests
+- **Cross-language validation** — Rust nom reference tests and benchmarks keep the combinator surface honest
+- **MoonBit-native workflow** — `make ci` drives format, static checks, and tests across MoonBit and Rust reference code
+
+## Two Surfaces
+
+### `src/nom/`
+
+The original parkit surface: a nom-like combinator toolkit for directly composing parsers in MoonBit.
+
+### `src/antlr/`
+
+The user-facing flow is straightforward: write a `.g4`, run `parkit generate antlr`, import the generated package, and call `parse` in normal MoonBit code.
+
+See the package guide: [src/antlr/READMD.md](src/antlr/READMD.md)
 
 ## Project layout
 
 ```
 src/
   nom/            — the parkit parser combinator library (cogna-dev/parkit/nom)
+  antlr/          — frontend, runtime, CST, typed CST, fixtures, and specs
 examples/
+  antlr/          — generated-package ANTLR sample built with `parkit generate antlr --out`
   json/           — JSON parser sample built with parkit (not published to mooncakes)
   benchmark/      — MoonBit benchmarks (not published to mooncakes)
 reference/
@@ -40,17 +54,38 @@ let json = @json.parse("{\"key\": 42}")
 // => Ok(Object([("key", Number(42.0))]))
 ```
 
+## ANTLR Quick Tour
+
+The shortest path on the ANTLR side is:
+
+1. Write a normal `.g4` grammar.
+2. Run `parkit generate antlr ./hello.g4 --out ./src/hello`.
+3. Import the generated package with an alias such as `@hello`.
+4. Call `@hello.parse(...)` and use typed fields such as `fields.id_token.lexeme`.
+
+The full end-to-end guide lives in [src/antlr/READMD.md](src/antlr/READMD.md). A checked-in sample project lives in [examples/antlr/app/main.mbt](examples/antlr/app/main.mbt) and its grammar source in [examples/antlr/grammar/hello.g4](examples/antlr/grammar/hello.g4). The deeper design and contract documents stay indexed in [src/antlr/spec/README.md](src/antlr/spec/README.md).
+
 ## Running tests
 
 ```bash
-moon test --manifest-path moon.work.json
+moon test --manifest-path moon.work
+```
+
+## Engineering checks
+
+```bash
+make format        # rewrite MoonBit and Rust formatting in place
+make format-check  # verify formatting without changing files
+make lint          # MoonBit static checks plus Rust compile checks
+make test          # MoonBit workspace tests plus Rust reference tests
+make ci            # format-check, lint, then test
 ```
 
 ## Running benchmarks
 
 ```bash
 # MoonBit benchmarks (native target)
-moon bench --manifest-path moon.work.json --target native
+moon bench --manifest-path moon.work --target native
 
 # Rust criterion benchmarks
 cargo bench --manifest-path reference/nom-json/Cargo.toml

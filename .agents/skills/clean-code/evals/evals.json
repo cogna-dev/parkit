@@ -1,0 +1,45 @@
+{
+  "skill_name": "clean-code",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请对 `typescript-case` 目录做发布前重构。要求：1) 保持 `src/ui/admin/routes/exportUserReport.ts` 的对外行为不变；2) 把报表能力收敛成 `src/reports/index.ts` 这个稳定入口，对外只暴露 `createUserReport` 和必要类型；3) 使用现有 `@/*` alias 消除跨层 `../../` 或 `../../../` 导入；4) 把当前文件里混在一起的过滤、格式化、CSV 渲染细节下沉，删除无职责导出；5) 做你认为必要的最小验证，如果环境里跑不起来要在 `report.md` 里说明原因。",
+      "expected_output": "TypeScript 报表代码被重组为稳定入口和更窄的导出面，跨层相对导入被收敛，结果附带验证说明。",
+      "files": [
+        "evals/files/typescript-case/tsconfig.json",
+        "evals/files/typescript-case/src/shared/dateTools.ts",
+        "evals/files/typescript-case/src/features/reports/userReportService.ts",
+        "evals/files/typescript-case/src/ui/admin/routes/exportUserReport.ts"
+      ],
+      "expectations": [
+        "The refactor creates src/reports/index.ts as the stable public entry for report generation.",
+        "TypeScript source imports no longer use ../../ or ../../../ paths when a stable alias path is available.",
+        "src/ui/admin/routes/exportUserReport.ts imports only from @/reports instead of internal report helper modules.",
+        "The legacy src/features/reports/userReportService.ts layer is removed rather than kept as an empty compatibility stub.",
+        "report.md records either a validation run or a specific validation blocker."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请对 `rust-case` 目录做结构性重构。要求：1) 保持 `crate::api::{export_invoice, export_invoice_preview}` 可用；2) 新增 `crate::invoice::generate` 作为稳定领域入口；3) `api` 层不要继续依赖内部 helper；4) 所有跨模块导入都改为从 `crate::` 根路径开始，不使用 `super::super`；5) 给稳定公开 API 补上文档注释；6) 运行 `cargo fmt` 和你能做的最小验证，把结果写到 `report.md`，如果有阻塞要说明。",
+      "expected_output": "Rust crate 收敛出稳定入口模块，去掉脆弱的 super::super 导入，公开 API 更清晰，并附带验证说明。",
+      "files": [
+        "evals/files/rust-case/Cargo.toml",
+        "evals/files/rust-case/src/lib.rs",
+        "evals/files/rust-case/src/api/mod.rs",
+        "evals/files/rust-case/src/api/export.rs",
+        "evals/files/rust-case/src/reporting/mod.rs",
+        "evals/files/rust-case/src/reporting/generate_invoice.rs",
+        "evals/files/rust-case/src/shared/mod.rs",
+        "evals/files/rust-case/src/shared/date_format.rs"
+      ],
+      "expectations": [
+        "The refactor adds src/invoice/mod.rs with a documented stable generate entry point.",
+        "Rust source imports no longer use super::super paths.",
+        "src/lib.rs narrows the crate surface so old reporting or shared implementation modules are no longer publicly exported.",
+        "src/invoice/mod.rs does not import normalize_customer_name, render_invoice_lines, or generate_invoice from the old reporting implementation.",
+        "report.md records cargo fmt plus a validation result or a specific blocker."
+      ]
+    }
+  ]
+}

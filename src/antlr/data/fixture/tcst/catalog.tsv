@@ -1,0 +1,4 @@
+# id	grammar_path	input_path
+hello-basic-local	atn/grammars/hello_basic.g4	parser/inputs/hello_basic.txt
+expr-left-recursive	atn/grammars/expr_left_recursive.g4	parser/inputs/expr_left_recursive.txt
+cardinality-mix	tcst/grammars/cardinality_mix.g4	tcst/inputs/cardinality_mix.txt

@@ -1,0 +1,12 @@
+CST	1
+grammar	ParserPredicate	combined	s	ParserPredicate	grammar=ParserPredicate\nkind=combined\nstart_rule_id=0\nrule=0:s:parser:normal:-:-\nrule=1:item:parser:normal:-:-\nrule=2:ID:lexer:normal:-:-\nrule=3:WS:lexer:normal:-:-\nalt=0:1:-\nalt=1:1:Allowed\nalt=1:2:Pair\nalt=2:1:-\nalt=3:1:-\nslot=0:1:0:0:rule-ref:-:-:plain\nslot=0:1:1:1:token-ref:-:-:plain\nslot=1:1:0:0:predicate:-:-:plain\nslot=1:1:1:1:token-ref:-:-:plain\nslot=1:2:0:0:token-ref:-:-:plain\nslot=1:2:1:1:token-ref:-:-:plain\nslot=2:1:0:0:charset:-:one-or-more:greedy:plain\nslot=3:1:0:0:charset:-:one-or-more:greedy:plain\ntoken=0:ID:-:explicit\ntoken=1:WS:-:explicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	0	ID	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	0,1,0,3,1,3	yes
+token	1	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	3,1,3,3,1,3	
+node	rule	0	s	ParserPredicate	1	-	0	0,1,0,3,1,3
+edge	0	1	s	1	0	0	-	rule:item	0	0
+edge	0	3	s	1	1	1	-	token:EOF	0	0
+node	rule	1	item	ParserPredicate	1	Allowed	0	0,1,0,3,1,3
+edge	1	2	item	1	1	1	-	token:ID	0	0
+node	token	2	0	0	0,1,0,3,1,3
+node	token	3	1	0	3,1,3,3,1,3
