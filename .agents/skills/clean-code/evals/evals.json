@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "请对 `typescript-case` 目录做发布前重构。要求：1) 保持 `src/ui/admin/routes/exportUserReport.ts` 的对外行为不变；2) 把报表能力收敛成 `src/reports/index.ts` 这个稳定入口，对外只暴露 `createUserReport` 和必要类型；3) 使用现有 `@/*` alias 消除跨层 `../../` 或 `../../../` 导入；4) 把当前文件里混在一起的过滤、格式化、CSV 渲染细节下沉，删除无职责导出；5) 做你认为必要的最小验证，如果环境里跑不起来要在 `report.md` 里说明原因。",
-      "expected_output": "TypeScript 报表代码被重组为稳定入口和更窄的导出面，跨层相对导入被收敛，结果附带验证说明。",
+      "prompt": "Refactor the `typescript-case` directory before release. Requirements: 1) preserve the external behavior of `src/ui/admin/routes/exportUserReport.ts`; 2) consolidate report capabilities behind the stable entry point `src/reports/index.ts`, exposing only `createUserReport` and the necessary types; 3) use the existing `@/*` alias to eliminate cross-layer `../../` or `../../../` imports; 4) sink the filtering, formatting, and CSV rendering details that are currently mixed together, and delete exports with no responsibility; 5) run the minimal validation you think is necessary, and if it cannot run in the environment, explain the blocker in `report.md`.",
+      "expected_output": "The TypeScript report code is reorganized behind a stable entry point with a narrower export surface, deep relative imports are removed, and the result includes validation notes.",
       "files": [
         "evals/files/typescript-case/tsconfig.json",
         "evals/files/typescript-case/src/shared/dateTools.ts",
@@ -21,8 +21,8 @@
     },
     {
       "id": 2,
-      "prompt": "请对 `rust-case` 目录做结构性重构。要求：1) 保持 `crate::api::{export_invoice, export_invoice_preview}` 可用；2) 新增 `crate::invoice::generate` 作为稳定领域入口；3) `api` 层不要继续依赖内部 helper；4) 所有跨模块导入都改为从 `crate::` 根路径开始，不使用 `super::super`；5) 给稳定公开 API 补上文档注释；6) 运行 `cargo fmt` 和你能做的最小验证，把结果写到 `report.md`，如果有阻塞要说明。",
-      "expected_output": "Rust crate 收敛出稳定入口模块，去掉脆弱的 super::super 导入，公开 API 更清晰，并附带验证说明。",
+      "prompt": "Perform a structural refactor on the `rust-case` directory. Requirements: 1) keep `crate::api::{export_invoice, export_invoice_preview}` available; 2) add `crate::invoice::generate` as the stable domain entry point; 3) the `api` layer must stop depending on internal helpers; 4) rewrite all cross-module imports to start from the `crate::` root instead of using `super::super`; 5) add doc comments to stable public APIs; 6) run `cargo fmt` and the smallest validation you can, then record the results in `report.md`, including any blockers.",
+      "expected_output": "The Rust crate converges on a stable entry-point module, removes fragile `super::super` imports, clarifies the public API, and includes validation notes.",
       "files": [
         "evals/files/rust-case/Cargo.toml",
         "evals/files/rust-case/src/lib.rs",
