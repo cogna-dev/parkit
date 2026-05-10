@@ -1,8 +1,10 @@
 ---
 name: clean-code
 description: >
-  通过对用户给定范围内的全量相关代码做盘点、收敛和验证，把“可工作代码”重构为更深的模块和更小的公开接口。
-  适用于超长文件、职责混杂、导入路径脆弱、命名噪音、错误语义泄漏等场景。
+  Audit, narrow, and verify all relevant code inside the user-given scope so you can refactor
+  "working code" into deeper modules with smaller public interfaces.
+  Use it for oversized files, mixed responsibilities, fragile import paths, noisy naming,
+  and leaked low-level error semantics.
 license: MIT
 metadata:
   author: yufeiminds
@@ -11,45 +13,45 @@ metadata:
 
 # Clean Code
 
-通过先全量盘点、再逐项落地的结构性重构，在不破坏行为的前提下收敛复杂度。
+Use structural refactors that start with a full inventory and then land changes step by step to reduce complexity without breaking behavior.
 
 ## When to Apply
 
-- 手写源码文件过长，或一个模块承担多个变化原因
-- 同一函数混合业务编排和底层细节
-- 中间类型、辅助函数、barrel 或 facade 把实现细节暴露给外部
-- 命名重复父级语义，或同一概念同时存在平铺文件和目录模块两种层级
-- 导入路径对目录深度过于敏感，例如依赖 `super::super` 或 `../../`
-- 错误直接泄漏 IO、网络、解析或框架细节
-- 测试文件臃肿，已难以按行为定位
+- Handwritten source files are too long, or one module carries multiple reasons to change
+- A single function mixes business orchestration with low-level details
+- Intermediate types, helper modules, barrels, or facades expose implementation details to callers
+- Names repeat parent-level meaning, or the same concept exists as both a flat file and a directory module
+- Import paths are too sensitive to directory depth, such as `super::super` or `../../`
+- Errors leak IO, network, parsing, or framework details directly
+- Test files have grown too large to navigate by behavior
 
 ## Do Not Apply
 
-- 只是一次性局部 bug，且没有结构性债务
-- 当前迭代禁止结构调整
-- 没有最小验证手段，无法确认行为保持不变
+- The task is just a one-off local bug with no structural debt
+- The current iteration forbids structural changes
+- There is no minimal validation path to confirm behavior stays the same
 
 ## Instructions
 
-1. 先分析用户给定范围内的全量相关代码，而不只盯住当前文件或最小切片：实现、入口、导出点、导入路径、调用方、测试、目录层级、死代码和空目录都在范围内。
-2. 在完成全量盘点后建立 todo 清单，覆盖本轮相关的入口、实现、调用方、导出、测试和清扫项；按依赖关系和风险顺序推进。
-3. 以 deep module 为目标：用更少、更稳的接口隐藏更多实现复杂度，而不是为了拆分而拆分。
-4. 默认收敛可见性、导出面和导入路径；调用方应依赖根包的稳定公开路径，而不是相对目录爬升或父级层层回退。
-5. 删除浅层包装、镜像模块、重复逻辑、空目录和空兼容桩；同一概念只保留一种一致层级表达。若必须暂时保留旧路径，也要让它成为有明确职责和迁移说明的 facade，而不是空壳文件。
-6. 命名直接表达职责；若文件或模块名包含多个词，必须先评估能否通过改名、下沉到父模块或继续拆分收敛为更短、更局部的名字，只有显著减少歧义时才保留双词或多词命名。
-7. 把底层错误映射为领域错误，用有语义的类型替代核心路径里的裸原始类型。
-8. 大测试文件与实现同治：白盒测试尽量贴近实现，组合测试按统一维度拆分，不保留难以导航的扁平堆积。
-9. 每完成一项就运行最接近切片的验证；无法运行时，说明原因、影响范围和残余风险。
+1. Analyze all relevant code inside the user-given scope, not just the current file or smallest slice: implementations, entry points, exports, import paths, callers, tests, directory layout, dead code, and empty directories are all in scope.
+2. After the full inventory, build a todo list that covers the relevant entry points, implementations, callers, exports, tests, and cleanup work for this round; execute it in dependency and risk order.
+3. Aim for deep modules: hide more implementation complexity behind fewer, more stable interfaces instead of splitting code for its own sake.
+4. Narrow visibility, exports, and import paths by default; callers should depend on stable root-package paths instead of climbing through relative directories or parent modules.
+5. Delete shallow wrappers, mirror modules, duplicated logic, empty directories, and empty compatibility stubs; keep exactly one consistent layer for each concept. If an old path must remain temporarily, make it a facade with a clear responsibility and migration purpose, not an empty shell.
+6. Names must state responsibility directly. If a file or module name contains multiple words, first test whether renaming it, moving it under the parent module, or splitting it further can reduce it to a shorter local name. Keep multi-word names only when they materially reduce ambiguity.
+7. Map low-level errors into domain errors, and replace naked primitive types on core paths with semantically meaningful types.
+8. Refactor large test files along with implementation code: keep white-box tests close to the implementation, and split broader behavioral tests by one organizing dimension instead of leaving them as a flat pile.
+9. Run the closest validation you can after each completed item; when you cannot run it, explain why, what scope is affected, and what residual risk remains.
 
 ## Restructuring Heuristics
 
-- 文件拆分按职责边界，不按行数平均切；入口文件只做声明、re-export 和 facade。
-- 父模块只有在聚合多个子模块、隐藏策略或统一契约时才保留；否则删除转发层。
-- 不把旧入口清空成 `export {}`、空 barrel 或无职责兼容桩；要么删除 dead path，要么保留带迁移职责的稳定 facade。
-- 导入优先使用根包的稳定路径或稳定 alias，而不是目录相对爬升；重构后的路径应更稳定，而不是更依赖当前目录深度。
-- 双词或多词文件名不是默认选项；先评估能否通过改名、下沉或继续拆分收敛为更短的局部语义。
-- 大测试文件按 workflow、error cases、input family 等单一维度拆分；白盒测试尽量贴近实现。
-- 对稳定导出项补文档注释，写清用途、示例和注意事项。
+- Split files by responsibility boundaries, not by trying to equalize line counts; entry files should only declare modules, re-export symbols, or provide facades.
+- Keep a parent module only when it aggregates multiple child modules, hides strategy, or unifies a contract; otherwise delete the forwarding layer.
+- Do not leave old entry points behind as `export {}`, empty barrels, or compatibility shells with no responsibility; either delete dead paths or keep a stable facade with an explicit migration role.
+- Prefer stable root-package paths or stable aliases for imports instead of climbing directories with relative paths; the refactored path should be more stable, not more dependent on the current folder depth.
+- Multi-word file names are not the default; first see whether renaming, sinking, or further splitting can produce shorter local meaning.
+- Split large test files by a single dimension such as workflow, error cases, or input family; keep white-box tests close to implementation where possible.
+- Add documentation comments to stable exported items to explain purpose, examples, and caveats.
 
 ## Language Guides
 
@@ -57,30 +59,29 @@ metadata:
 - [TypeScript](./assets/typescript.md)
 - [MoonBit](./assets/moonbit.md)
 
-只在当前切片确实涉及对应语言约束时再展开附录，不要一次加载全部细则。
+Only open the appendix for the language that is genuinely involved in the current slice; do not load every guide at once.
 
 ## References
 
-- [Clean Code 摘要](./references/clean-code.md)
-- [软件设计哲学摘要](./references/a-philosophy-of-software-design.md)
-- Deep Module：判断一次拆分是否成立时，先看它是否真的减少了调用方需要理解的概念数量。
+- [Clean Code Summary](./references/clean-code.md)
+- [A Philosophy of Software Design Summary](./references/a-philosophy-of-software-design.md)
+- Deep Module: when judging whether a split is valid, first ask whether it actually reduces the number of concepts the caller must understand.
 
-这些文档只作为辅助参考，优先服务于当前仓库的结构收敛与验证要求。
-
+These references are supporting material only; prioritize the current repository's structural simplification and validation needs.
 
 ## Output
 
-最终回复应包含：
+The final response should include:
 
-1. 变更摘要
-2. 关键结构决策
-3. 兼容性说明
-4. 验证结果
-5. 残余风险
+1. Change summary
+2. Key structural decisions
+3. Compatibility notes
+4. Validation results
+5. Residual risks
 
 ## Guardrails
 
-- 优先最小必要改动，但分析必须覆盖用户给定范围内的全量相关代码
-- 不在入口文件塞业务实现
-- 未获授权，不做破坏性 API 变更
-- 不把文件数增加误当成设计改进
+- Prefer the smallest necessary change, but the analysis must still cover all relevant code inside the user-given scope
+- Do not place business implementation in entry files
+- Do not make breaking API changes without explicit approval
+- Do not mistake a higher file count for better design

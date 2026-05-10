@@ -1,33 +1,33 @@
 # Rust Appendix
 
-仅当当前切片是 Rust / Cargo workspace 时再读取本附录。
+Read this appendix only when the current slice is Rust or a Cargo workspace.
 
 ## Focus Checks
 
-- `mod.rs`、`lib.rs` 或 `main.rs` 堆积了业务实现，而不只是入口或 facade
-- 大型 `impl` 同时承担编排、存储、解析、校验或序列化
-- 父模块只是在做 `child::x()` 转发或重复 `pub use`
-- 同一概念同时保留 `foo.rs` 和 `foo/` 目录模块
-- `pub` / `pub(crate)` 扩散，让内部类型和中间态结构外泄
-- 导入依赖 `use super::super::...` 这类脆弱的相对祖先路径
-- 文件或模块名由多个词拼接而成，但其中一部分只是重复父级语义
-- 大型测试文件远离实现，已难以按行为定位
+- `mod.rs`, `lib.rs`, or `main.rs` accumulates business implementation instead of staying an entry point or facade
+- A large `impl` mixes orchestration, persistence, parsing, validation, or serialization
+- A parent module only forwards `child::x()` calls or repeats `pub use`
+- The same concept still exists as both `foo.rs` and a `foo/` directory module
+- `pub` or `pub(crate)` has spread too far, leaking internal types and transitional structures
+- Imports depend on fragile ancestor paths such as `use super::super::...`
+- A file or module name uses multiple words, but part of the name only repeats parent meaning
+- Large test files are far away from the implementation and hard to navigate by behavior
 
 ## Instructions
 
-1. 让 `mod.rs` 保持为模块声明、re-export 或 facade，不在入口层堆业务逻辑。
-2. 大型 `impl` 按能力拆分为多个文件，如 `read.rs`、`write.rs`、`validate.rs`，但不要制造只有一层转发的薄壳。
-3. 可见性按私有 → `pub(super)` → `pub(crate)` → `pub` 逐级放宽，只在真实跨边界需求出现时提升。
-4. 导入优先使用 crate 根上的稳定路径，例如 `use crate::foo::bar`；避免 `use super::super::bar`，除非局部测试模块或语言边界使其不可避免。
-5. 删除父层浅包装和重复 `pub use`，除非它们确实减少了调用方需要理解的入口数量。
-6. 若文件或模块名包含多个词，先评估能否通过改名、下沉到父模块或继续拆分来压缩命名；只有明显减少歧义时才保留多词命名。
-7. 用领域类型和领域错误替代裸 `String` / `usize` / `io::Error` 在模块边界横向传播。
-8. 白盒测试优先放在 `#[cfg(test)] mod tests`；大型组合测试按 workflow 或 error domain 拆分。
-9. 对稳定的 `pub` / `pub(crate)` API 补文档注释，至少写清用途、示例和注意事项。
+1. Keep `mod.rs` focused on module declarations, re-exports, or facades; do not pile business logic into entry layers.
+2. Split large `impl` blocks by capability into files such as `read.rs`, `write.rs`, or `validate.rs`, but do not create thin shells that only forward calls.
+3. Widen visibility gradually from private → `pub(super)` → `pub(crate)` → `pub`, and only promote items when a real cross-boundary need appears.
+4. Prefer stable paths from the crate root, such as `use crate::foo::bar`, instead of `use super::super::bar`, unless a local test module or language boundary makes that unavoidable.
+5. Delete shallow parent wrappers and duplicated `pub use` unless they genuinely reduce the number of entry points callers must understand.
+6. If a file or module name contains multiple words, first see whether renaming it, sinking it into the parent module, or splitting it further can shorten the name. Keep multi-word names only when they clearly reduce ambiguity.
+7. Replace naked `String`, `usize`, and `io::Error` propagation across module boundaries with domain types and domain errors.
+8. Prefer white-box tests in `#[cfg(test)] mod tests`; split large integration-style tests by workflow or error domain.
+9. Add doc comments to stable `pub` or `pub(crate)` APIs that explain purpose, examples, and caveats.
 
 ## Validation
 
 - `cargo fmt`
-- `cargo clippy` 或仓库约定 lint
-- 与切片最接近的 `cargo test`
-- 若受 feature、workspace member 或 target 限制，明确说明验证范围
+- `cargo clippy` or the repository's established lint
+- The closest `cargo test` for the current slice
+- If features, workspace members, or targets limit validation, state the exact validation scope

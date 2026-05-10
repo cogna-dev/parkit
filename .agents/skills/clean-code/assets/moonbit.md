@@ -1,33 +1,33 @@
 # MoonBit Appendix
 
-仅当当前切片是 MoonBit（`.mbt`、`moon.mod.json`、`moon.pkg.json`）时再读取本附录。
+Read this appendix only when the current slice is MoonBit (`.mbt`, `moon.mod.json`, `moon.pkg.json`).
 
 ## Focus Checks
 
-- 根入口文件既承担 package facade，又堆积了核心业务实现
-- 目录和文件没有按能力组织，导致 `.mbt` 文件持续膨胀
-- `pub` 声明过宽，让内部结构、辅助函数或中间表示跨包泄漏
-- 核心路径仍在传播裸 `String`、`Int` 或底层错误文本，而非领域语义
-- 文件或模块名由多个词拼接而成，但其中一部分只是重复父级语义
-- 测试离实现过远，或大型测试文件未按行为拆分
-- 结构调整后需要修改 `moon.mod.json` / `moon.pkg.json`，但没有明确边界理由
+- The root entry file acts as a package facade while also accumulating core business implementation
+- Directories and files are not organized by capability, so `.mbt` files keep growing
+- `pub` declarations are too broad and leak internal structures, helper functions, or transitional representations across packages
+- Core paths still pass around naked `String`, `Int`, or low-level error text instead of domain meaning
+- A file or module name uses multiple words, but part of the name only repeats parent meaning
+- Tests are too far from the implementation, or large test files are not split by behavior
+- Structural changes require updates to `moon.mod.json` or `moon.pkg.json`, but there is no clear boundary reason for doing so
 
 ## Instructions
 
-1. 把顶层入口文件当作 package facade；除必要导出外，不把主要实现继续堆在根入口。
-2. 大文件按能力拆到子目录或相邻 `.mbt` 文件，名称直接表达职责，不重复父级语义。
-3. 默认使用更窄的可见性，只把真实跨包契约声明为 `pub`；不要把内部辅助层直接做成公共 API。
-4. 优先通过稳定的 package facade 和公开入口组织依赖，不让调用方直接依赖内部文件布局。
-5. 若文件或模块名包含多个词，先评估能否通过改名、下沉到父模块或继续拆分压缩命名；只有明显减少歧义时才保留多词命名。
-6. 用领域类型、枚举或结构体承载核心约束，避免让裸字符串和魔法数字充当隐式协议。
-7. 在边界层把解析、IO、平台或第三方错误收敛成领域错误，不把底层细节直接暴露给上层调用方。
-8. 删除镜像式转发文件和无职责目录；同一概念只保留一种层级表达。
-9. 白盒测试优先贴近实现，使用就近的 `test` 块或相邻测试文件；大型行为测试按 workflow 或 error family 拆分。
-10. 只有在依赖、包边界、后端目标或构建配置真的变化时，才同步调整 `moon.mod.json` / `moon.pkg.json`。
+1. Treat the top-level entry file as the package facade; beyond required exports, do not keep piling primary implementation into the root entry.
+2. Split large files by capability into subdirectories or adjacent `.mbt` files. Names should state responsibility directly and should not repeat parent meaning.
+3. Prefer narrower visibility by default, and mark only real cross-package contracts as `pub`; do not turn internal helper layers into public APIs.
+4. Organize dependencies through stable package facades and public entry points so callers do not depend directly on internal file layout.
+5. If a file or module name contains multiple words, first see whether renaming it, sinking it, or splitting it further can shorten the name. Keep multi-word names only when they clearly reduce ambiguity.
+6. Use domain types, enums, or structs to encode core constraints instead of making naked strings and magic numbers act as implicit protocol.
+7. Collapse parsing, IO, platform, or third-party errors into domain errors at boundaries instead of exposing low-level details directly to upper layers.
+8. Delete mirror forwarding files and responsibility-free directories; keep exactly one layer for each concept.
+9. Keep white-box tests close to the implementation with nearby `test` blocks or adjacent test files; split larger behavioral tests by workflow or error family.
+10. Update `moon.mod.json` or `moon.pkg.json` only when dependencies, package boundaries, backend targets, or build configuration genuinely changed.
 
 ## Validation
 
 - `moon fmt`
 - `moon check`
 - `moon test`
-- 若仓库依赖接口产物或文档索引，补跑 `moon info`
+- If the repository depends on interface artifacts or documentation indexes, also run `moon info`
