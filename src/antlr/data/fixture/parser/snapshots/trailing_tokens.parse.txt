@@ -1,0 +1,11 @@
+PARSER	1
+summary	s	0	3	0	0	1	1	1
+event	enter-rule	0	0	s	-	-	-	-	0	ID	0	0,1,0,0,1,0	-	-
+event	commit-alt	0	0	s	1	-	-	-	0	ID	0	0,1,0,0,1,0	-	-
+event	consume-token	0	0	s	1	-	0	0	0	ID	0	0,1,0,1,1,1	a	-
+event	consume-token	0	1	s	1	-	1	1	1	ID	0	2,1,2,3,1,3	b	-
+event	exit-rule	0	2	s	-	-	-	-	2	ID	0	0,1,0,4,1,4	-	ok
+event	recovery	0	2	-	-	unexpected-token	-	-	2	ID	1	4,1,4,5,1,5	c	unexpected trailing token `ID`
+recovery	unexpected-token	2	ID	2	4,1,4,5,1,5	unexpected trailing token `ID`
+diagnostic	error	4,1,4,5,1,5	unexpected trailing token `ID`
+dfa	0	0	ID	1	1	0	2@1@0@$@0|4@0@0@$@0|5@0@1@$@0|6@0@1@$@0|7@0@2@$@0|3@0@2@$@0|1@0@2@$@0

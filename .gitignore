@@ -1,7 +1,13 @@
 # MoonBit build artifacts
 _build/
 .mooncakes/
+src/antlr/fixture/generated_*.mbt
+.tmp/
 
 # Rust build artifacts
 target/
 Cargo.lock
+
+# Editor and local tooling state
+.DS_Store
+.vscode/

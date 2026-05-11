@@ -1,0 +1,7 @@
+import {
+  "cogna-dev/parkit-examples/antlr/hello" @hello,
+}
+
+options(
+  "is-main": true,
+)

@@ -1,0 +1,14 @@
+CST	1
+grammar	TrailingTokens	combined	s	TrailingTokens	grammar=TrailingTokens\nkind=combined\nstart_rule_id=0\nrule=0:s:parser:normal:-:-\nrule=1:ID:lexer:normal:-:-\nrule=2:WS:lexer:normal:-:-\nalt=0:1:-\nalt=1:1:-\nalt=2:1:-\nslot=0:1:0:0:token-ref:-:-:plain\nslot=0:1:1:1:token-ref:-:-:plain\nslot=1:1:0:0:charset:-:one-or-more:greedy:plain\nslot=2:1:0:0:charset:-:one-or-more:greedy:plain\ntoken=0:ID:-:explicit\ntoken=1:WS:-:explicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	0	ID	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	0,1,0,1,1,1	a
+token	1	0	ID	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	2,1,2,3,1,3	b
+token	2	0	ID	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	4,1,4,5,1,5	c
+token	3	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	5,1,5,5,1,5	
+node	rule	0	s	TrailingTokens	1	-	1	0,1,0,4,1,4
+edge	0	1	s	1	0	0	-	token:ID	0	0
+edge	0	2	s	1	1	1	-	token:ID	0	0
+node	token	1	0	0	0,1,0,1,1,1
+node	token	2	1	0	2,1,2,3,1,3
+node	error	3	unexpected-token	4,1,4,5,1,5	unexpected trailing token `ID`	
+recovery	unexpected-token	unexpected-token	3	2	2	4,1,4,5,1,5	unexpected trailing token `ID`

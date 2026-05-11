@@ -1,0 +1,9 @@
+# bucket	id	grammar_path	input_path	snapshot_path	lexer_true_predicates	lexer_action_labels	parser_true_predicates	parser_action_labels
+representative	hello-basic-local	atn/grammars/hello_basic.g4	parser/inputs/hello_basic.txt	cst/snapshots/hello_basic_local.cst.txt				
+representative	expr-left-recursive	atn/grammars/expr_left_recursive.g4	parser/inputs/expr_left_recursive.txt	cst/snapshots/expr_left_recursive.cst.txt				
+representative	parser-predicate	parser/grammars/parser_predicate.g4	parser/inputs/parser_predicate.txt	cst/snapshots/parser_predicate.cst.txt			{ allow() }	
+representative	trailing-tokens	parser/grammars/trailing_tokens.g4	parser/inputs/trailing_tokens.txt	cst/snapshots/trailing_tokens.cst.txt				
+upstream	visitor-basic	upstream/runtime/Swift/Tests/Antlr4Tests/VisitorBasic.g4	parser/inputs/visitor_basic.txt	cst/snapshots/visitor_basic.cst.txt				
+upstream	visitor-calc-hidden	upstream/runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/VisitorCalc.g4	cst/inputs/visitor_calc_hidden.txt	cst/snapshots/visitor_calc_hidden.cst.txt				
+upstream	python-expr	upstream/runtime/Python3/tests/expr/Expr.g4	parser/inputs/python_expr.txt	cst/snapshots/python_expr.cst.txt				
+upstream	hello-basic-upstream	upstream/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/Hello.g4	parser/inputs/hello_basic.txt	cst/snapshots/hello_basic_upstream.cst.txt				

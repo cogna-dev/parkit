@@ -1,0 +1,4 @@
+# id	grammar_path	snapshot_path
+hello-basic	grammars/hello_basic.g4	snapshots/hello_basic.atn.txt
+expr-left-recursive	grammars/expr_left_recursive.g4	snapshots/expr_left_recursive.atn.txt
+lexer-modes	grammars/lexer_modes.g4	snapshots/lexer_modes.atn.txt

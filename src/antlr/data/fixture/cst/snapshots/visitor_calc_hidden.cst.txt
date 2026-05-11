@@ -1,0 +1,36 @@
+CST	1
+grammar	VisitorCalc	combined	s	VisitorCalc	grammar=VisitorCalc\nkind=combined\nstart_rule_id=0\nrule=0:s:parser:normal:-:-\nrule=1:expr:parser:normal:-:-\nrule=2:INT:lexer:normal:-:-\nrule=3:MUL:lexer:normal:-:-\nrule=4:DIV:lexer:normal:-:-\nrule=5:ADD:lexer:normal:-:-\nrule=6:SUB:lexer:normal:-:-\nrule=7:WS:lexer:normal:-:-\nalt=0:1:-\nalt=1:1:number\nalt=1:2:multiply\nalt=1:3:add\nalt=2:1:-\nalt=3:1:-\nalt=4:1:-\nalt=5:1:-\nalt=6:1:-\nalt=7:1:-\nslot=0:1:0:0:rule-ref:-:-:plain\nslot=0:1:1:1:token-ref:-:-:plain\nslot=1:1:0:0:token-ref:-:-:plain\nslot=1:2:0:0:rule-ref:-:-:plain\nslot=1:2:1:1:group:-:-:plain\nslot=1:2:2:2:rule-ref:-:-:plain\nslot=1:3:0:0:rule-ref:-:-:plain\nslot=1:3:1:1:group:-:-:plain\nslot=1:3:2:2:rule-ref:-:-:plain\nslot=2:1:0:0:charset:-:one-or-more:greedy:plain\nslot=3:1:0:0:string:-:-:plain\nslot=4:1:0:0:string:-:-:plain\nslot=5:1:0:0:string:-:-:plain\nslot=6:1:0:0:string:-:-:plain\nslot=7:1:0:0:charset:-:one-or-more:greedy:plain\ntoken=0:INT:-:explicit\ntoken=1:MUL:-:explicit\ntoken=2:DIV:-:explicit\ntoken=3:ADD:-:explicit\ntoken=4:SUB:-:explicit\ntoken=5:WS:-:explicit\nchannel=0:DEFAULT_TOKEN_CHANNEL\nchannel=1:HIDDEN\nmode=0:DEFAULT_MODE
+root	0
+token	0	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	0,1,0,1,1,1	1
+token	1	5	WS	-	1	HIDDEN	DEFAULT_MODE	0	0	0	1,1,1,2,1,2	 
+token	2	3	ADD	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	2,1,2,3,1,3	+
+token	3	5	WS	-	1	HIDDEN	DEFAULT_MODE	0	0	0	3,1,3,4,1,4	 
+token	4	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	4,1,4,5,1,5	2
+token	5	5	WS	-	1	HIDDEN	DEFAULT_MODE	0	0	0	5,1,5,6,1,6	 
+token	6	1	MUL	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	6,1,6,7,1,7	*
+token	7	5	WS	-	1	HIDDEN	DEFAULT_MODE	0	0	0	7,1,7,8,1,8	 
+token	8	0	INT	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	0	8,1,8,9,1,9	3
+token	9	-1	EOF	-	0	DEFAULT_TOKEN_CHANNEL	DEFAULT_MODE	0	0	1	9,1,9,9,1,9	
+node	rule	0	s	VisitorCalc	1	-	0	0,1,0,9,1,9
+edge	0	1	s	1	0	0	-	rule:expr	0	0
+edge	0	11	s	1	1	1	-	token:EOF	0	0
+node	rule	1	expr	VisitorCalc	3	add	0	0,1,0,9,1,9
+edge	1	3	expr	3	0	0	-	rule:expr	0	0
+edge	1	4	expr	3	1	1	-	group	0	0
+edge	1	5	expr	3	2	2	-	rule:expr	0	0
+node	token	2	0	0	0,1,0,1,1,1
+node	rule	3	expr	VisitorCalc	1	number	0	0,1,0,1,1,1
+edge	3	2	expr	1	0	0	-	token:INT	0	0
+node	token	4	2	0	2,1,2,3,1,3
+node	rule	5	expr	VisitorCalc	2	multiply	0	4,1,4,9,1,9
+edge	5	7	expr	2	0	0	-	rule:expr	0	0
+edge	5	8	expr	2	1	1	-	group	0	0
+edge	5	9	expr	2	2	2	-	rule:expr	0	0
+node	token	6	4	0	4,1,4,5,1,5
+node	rule	7	expr	VisitorCalc	1	number	0	4,1,4,5,1,5
+edge	7	6	expr	1	0	0	-	token:INT	0	0
+node	token	8	6	0	6,1,6,7,1,7
+node	rule	9	expr	VisitorCalc	1	number	0	8,1,8,9,1,9
+edge	9	10	expr	1	0	0	-	token:INT	0	0
+node	token	10	8	0	8,1,8,9,1,9
+node	token	11	9	0	9,1,9,9,1,9

@@ -1,0 +1,12 @@
+# bucket	id	grammar_path	input_path	snapshot_path	true_predicates	action_labels
+representative	hello-basic	atn/grammars/hello_basic.g4	lexer/inputs/hello_basic.txt	lexer/snapshots/hello_basic.tokens.txt		
+representative	lexer-command-modes	lexer/grammars/lexer_command_modes.g4	lexer/inputs/lexer_command_modes.txt	lexer/snapshots/lexer_command_modes.tokens.txt	{ can() }	
+representative	command-more-type	lexer/grammars/command_more_type.g4	lexer/inputs/command_more_type.txt	lexer/snapshots/command_more_type.tokens.txt		
+representative	fragment-refs	lexer/grammars/fragment_refs.g4	lexer/inputs/fragment_refs.txt	lexer/snapshots/fragment_refs.tokens.txt		
+representative	action-hooks	lexer/grammars/action_hooks.g4	lexer/inputs/action_hooks.txt	lexer/snapshots/action_hooks.tokens.txt		{ markA() }=mark-a,{ markB() }=mark-b
+representative	not-set-text	lexer/grammars/not_set_text.g4	lexer/inputs/not_set_text.txt	lexer/snapshots/not_set_text.tokens.txt		
+upstream	swift-lexer-a	upstream/runtime/Swift/Tests/Antlr4Tests/LexerA.g4	lexer/inputs/upstream_lexer_a.txt	lexer/snapshots/upstream_lexer_a.tokens.txt		
+upstream	swift-lexer-b	upstream/runtime/Swift/Tests/Antlr4Tests/LexerB.g4	lexer/inputs/upstream_lexer_b.txt	lexer/snapshots/upstream_lexer_b.tokens.txt		
+upstream	visitor-calc	upstream/runtime-testsuite/test/org/antlr/v4/test/runtime/java/api/VisitorCalc.g4	lexer/inputs/visitor_calc.txt	lexer/snapshots/visitor_calc.tokens.txt		
+upstream	base-comment	upstream/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/imports/TestBaseLexer.g4	lexer/inputs/base_comment.txt	lexer/snapshots/base_comment.tokens.txt		
+upstream	base-cdsect	upstream/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/imports/TestBaseLexer.g4	lexer/inputs/base_cdata.txt	lexer/snapshots/base_cdata.tokens.txt		

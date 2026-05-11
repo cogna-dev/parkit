@@ -1,0 +1,7 @@
+import {
+  "cogna-dev/parkit/antlr/core" @antlr,
+  "cogna-dev/parkit/antlr/cst" @antlr_cst,
+  "cogna-dev/parkit/antlr/fixture" @antlr_fixture,
+  "cogna-dev/parkit/antlr/runtime" @antlr_runtime,
+  "moonbitlang/x/fs" @fs,
+}

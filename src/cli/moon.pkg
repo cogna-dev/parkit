@@ -1,0 +1,9 @@
+import {
+  "cogna-dev/parkit/antlr/tcst" @antlr_tcst,
+  "moonbitlang/core/env" @env,
+  "moonbitlang/x/fs" @fs,
+}
+
+options(
+  "is-main": true,
+)

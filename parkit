@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+exec moon run --manifest-path "$SCRIPT_DIR/moon.mod.json" src/cli -- "$@"

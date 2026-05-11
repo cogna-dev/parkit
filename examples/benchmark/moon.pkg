@@ -1,0 +1,5 @@
+import {
+  "cogna-dev/parkit/nom" @nom,
+  "cogna-dev/parkit-examples/json" @json,
+  "moonbitlang/core/bench" @bench,
+}

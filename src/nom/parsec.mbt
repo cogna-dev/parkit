@@ -17,9 +17,9 @@
 /// Holds the remaining input at the point of failure and a descriptive message.
 pub struct ParseError {
   /// The remaining (unconsumed) input when the error occurred.
-  pub input : String
+  input : String
   /// Human-readable description of what went wrong.
-  pub message : String
+  message : String
 }
 
 ///|
@@ -68,13 +68,13 @@ pub struct Parser[O] {
 
 ///|
 /// Create a `Parser` from a plain function.
-pub fn Parser::new[O](f : (String) -> IResult[O]) -> Parser[O] {
+pub fn[O] Parser::new(f : (String) -> IResult[O]) -> Parser[O] {
   { run: f }
 }
 
 ///|
 /// Run a parser on the given input, returning an `IResult`.
-pub fn Parser::parse[O](self : Parser[O], input : String) -> IResult[O] {
+pub fn[O] Parser::parse(self : Parser[O], input : String) -> IResult[O] {
   (self.run)(input)
 }
 
@@ -88,7 +88,7 @@ pub fn Parser::parse[O](self : Parser[O], input : String) -> IResult[O] {
 /// Equivalent to nom's `tag`.
 ///
 /// ## Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let p = @parsec.tag("hello")
 /// assert_eq!(p.parse("hello world"), Ok((" world", "hello")))
 /// ```
@@ -204,7 +204,7 @@ pub fn take(n : Int) -> Parser[String] {
 pub fn take_while_m_n(
   m : Int,
   n : Int,
-  pred : (Char) -> Bool
+  pred : (Char) -> Bool,
 ) -> Parser[String] {
   Parser::new(fn(input) {
     let len = input.length()
@@ -236,7 +236,7 @@ pub fn take_while_m_n(
 /// Maps the output of a parser through a function.
 ///
 /// Equivalent to nom's `map`.
-pub fn map[A, B](parser : Parser[A], f : (A) -> B) -> Parser[B] {
+pub fn[A, B] map(parser : Parser[A], f : (A) -> B) -> Parser[B] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Ok((rest, value)) => Ok((rest, f(value)))
@@ -250,17 +250,16 @@ pub fn map[A, B](parser : Parser[A], f : (A) -> B) -> Parser[B] {
 /// If the function returns `Err`, the whole parser fails.
 ///
 /// Equivalent to nom's `map_res`.
-pub fn map_res[A, B, E : Show](
+pub fn[A, B, E : Show] map_res(
   parser : Parser[A],
-  f : (A) -> Result[B, E]
+  f : (A) -> Result[B, E],
 ) -> Parser[B] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Ok((rest, value)) =>
         match f(value) {
           Ok(b) => Ok((rest, b))
-          Err(e) =>
-            Err(ParseError::new(input, "map_res: " + e.to_string()))
+          Err(e) => Err(ParseError::new(input, "map_res: " + e.to_string()))
         }
       Err(e) => Err(e)
     }
@@ -271,9 +270,11 @@ pub fn map_res[A, B, E : Show](
 /// Tries parsers in order and returns the result of the first that succeeds.
 ///
 /// Equivalent to nom's `alt`.
-pub fn alt[O](parsers : Array[Parser[O]]) -> Parser[O] {
+pub fn[O] alt(parsers : Array[Parser[O]]) -> Parser[O] {
   Parser::new(fn(input) {
-    let mut last_err : ParseError = ParseError::new(input, "alt: no alternatives")
+    let mut last_err : ParseError = ParseError::new(
+      input, "alt: no alternatives",
+    )
     for p in parsers {
       match p.parse(input) {
         Ok(r) => return Ok(r)
@@ -288,7 +289,7 @@ pub fn alt[O](parsers : Array[Parser[O]]) -> Parser[O] {
 /// Applies two parsers sequentially and returns a tuple of their outputs.
 ///
 /// Equivalent to nom's `pair`.
-pub fn pair[A, B](first : Parser[A], second : Parser[B]) -> Parser[(A, B)] {
+pub fn[A, B] pair(first : Parser[A], second : Parser[B]) -> Parser[(A, B)] {
   Parser::new(fn(input) {
     match first.parse(input) {
       Ok((rest1, a)) =>
@@ -303,10 +304,10 @@ pub fn pair[A, B](first : Parser[A], second : Parser[B]) -> Parser[(A, B)] {
 
 ///|
 /// Applies three parsers and returns a tuple of their outputs.
-pub fn tuple3[A, B, C](
+pub fn[A, B, C] tuple3(
   pa : Parser[A],
   pb : Parser[B],
-  pc : Parser[C]
+  pc : Parser[C],
 ) -> Parser[(A, B, C)] {
   Parser::new(fn(input) {
     match pa.parse(input) {
@@ -329,7 +330,7 @@ pub fn tuple3[A, B, C](
 /// and returns the second parser's output.
 ///
 /// Equivalent to nom's `preceded`.
-pub fn preceded[A, B](discard : Parser[A], keep : Parser[B]) -> Parser[B] {
+pub fn[A, B] preceded(discard : Parser[A], keep : Parser[B]) -> Parser[B] {
   Parser::new(fn(input) {
     match discard.parse(input) {
       Ok((rest, _)) => keep.parse(rest)
@@ -343,7 +344,7 @@ pub fn preceded[A, B](discard : Parser[A], keep : Parser[B]) -> Parser[B] {
 /// and returns the first parser's output.
 ///
 /// Equivalent to nom's `terminated`.
-pub fn terminated[A, B](keep : Parser[A], discard : Parser[B]) -> Parser[A] {
+pub fn[A, B] terminated(keep : Parser[A], discard : Parser[B]) -> Parser[A] {
   Parser::new(fn(input) {
     match keep.parse(input) {
       Ok((rest1, a)) =>
@@ -360,10 +361,10 @@ pub fn terminated[A, B](keep : Parser[A], discard : Parser[B]) -> Parser[A] {
 /// Matches `open`, then `parser`, then `close`, returning only the middle.
 ///
 /// Equivalent to nom's `delimited`.
-pub fn delimited[A, B, C](
+pub fn[A, B, C] delimited(
   open : Parser[A],
   parser : Parser[B],
-  close : Parser[C]
+  close : Parser[C],
 ) -> Parser[B] {
   preceded(open, terminated(parser, close))
 }
@@ -372,7 +373,7 @@ pub fn delimited[A, B, C](
 /// Runs `parser` zero or more times, collecting results into an array.
 ///
 /// Equivalent to nom's `many0`.
-pub fn many0[O](parser : Parser[O]) -> Parser[Array[O]] {
+pub fn[O] many0(parser : Parser[O]) -> Parser[Array[O]] {
   Parser::new(fn(input) {
     let results : Array[O] = []
     let mut remaining = input
@@ -393,7 +394,7 @@ pub fn many0[O](parser : Parser[O]) -> Parser[Array[O]] {
 /// Runs `parser` one or more times, collecting results into an array.
 ///
 /// Equivalent to nom's `many1`.
-pub fn many1[O](parser : Parser[O]) -> Parser[Array[O]] {
+pub fn[O] many1(parser : Parser[O]) -> Parser[Array[O]] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Err(e) => Err(e)
@@ -419,9 +420,9 @@ pub fn many1[O](parser : Parser[O]) -> Parser[Array[O]] {
 /// Runs `parser` zero or more times separated by `sep`, collecting results.
 ///
 /// Equivalent to nom's `separated_list0`.
-pub fn separated_list0[O, S](
+pub fn[O, S] separated_list0(
   sep : Parser[S],
-  parser : Parser[O]
+  parser : Parser[O],
 ) -> Parser[Array[O]] {
   Parser::new(fn(input) {
     let results : Array[O] = []
@@ -453,9 +454,9 @@ pub fn separated_list0[O, S](
 /// Runs `parser` one or more times separated by `sep`, collecting results.
 ///
 /// Equivalent to nom's `separated_list1`.
-pub fn separated_list1[O, S](
+pub fn[O, S] separated_list1(
   sep : Parser[S],
-  parser : Parser[O]
+  parser : Parser[O],
 ) -> Parser[Array[O]] {
   Parser::new(fn(input) {
     match parser.parse(input) {
@@ -486,7 +487,7 @@ pub fn separated_list1[O, S](
 /// Makes a parser optional: returns `Some(value)` on success or `None` on failure.
 ///
 /// Equivalent to nom's `opt`.
-pub fn opt[O](parser : Parser[O]) -> Parser[O?] {
+pub fn[O] opt(parser : Parser[O]) -> Parser[O?] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Ok((rest, value)) => Ok((rest, Some(value)))
@@ -500,7 +501,7 @@ pub fn opt[O](parser : Parser[O]) -> Parser[O?] {
 /// If not, returns an error without consuming input.
 ///
 /// Equivalent to nom's `verify`.
-pub fn verify[O](parser : Parser[O], pred : (O) -> Bool) -> Parser[O] {
+pub fn[O] verify(parser : Parser[O], pred : (O) -> Bool) -> Parser[O] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Ok((rest, value)) =>
@@ -519,7 +520,7 @@ pub fn verify[O](parser : Parser[O], pred : (O) -> Bool) -> Parser[O] {
 /// consuming any input.
 ///
 /// Equivalent to nom's `success`.
-pub fn success[O](value : O) -> Parser[O] {
+pub fn[O] success(value : O) -> Parser[O] {
   Parser::new(fn(input) { Ok((input, value)) })
 }
 
@@ -527,7 +528,7 @@ pub fn success[O](value : O) -> Parser[O] {
 /// Returns a parser that always fails with the given message.
 ///
 /// Equivalent to nom's `fail`.
-pub fn fail[O](message : String) -> Parser[O] {
+pub fn[O] fail(message : String) -> Parser[O] {
   Parser::new(fn(input) { Err(ParseError::new(input, message)) })
 }
 
@@ -549,7 +550,7 @@ pub fn eof() -> Parser[String] {
 /// Wraps a parser with an additional error context message.
 ///
 /// Equivalent to nom's `context`.
-pub fn context[O](ctx : String, parser : Parser[O]) -> Parser[O] {
+pub fn[O] context(ctx : String, parser : Parser[O]) -> Parser[O] {
   Parser::new(fn(input) {
     match parser.parse(input) {
       Ok(r) => Ok(r)
@@ -586,7 +587,7 @@ pub fn multispace1() -> Parser[String] {
 
 ///|
 /// Wraps `parser`, consuming any leading whitespace before it.
-pub fn ws[O](parser : Parser[O]) -> Parser[O] {
+pub fn[O] ws(parser : Parser[O]) -> Parser[O] {
   preceded(multispace0(), parser)
 }
 
@@ -673,7 +674,7 @@ fn compute_double(
   int_str : String,
   frac_str : String,
   exp_sign : Int,
-  exp_str : String
+  exp_str : String,
 ) -> Double {
   // Integer part
   let mut int_part = 0.0
@@ -751,7 +752,10 @@ pub fn double() -> Parser[Double] {
     }
     // optional exponent
     let (exp_sign, exp_str) = if pos < len &&
-      (input.get_char(pos).unwrap() == 'e' || input.get_char(pos).unwrap() == 'E') {
+      (
+        input.get_char(pos).unwrap() == 'e' ||
+        input.get_char(pos).unwrap() == 'E'
+      ) {
       pos = pos + 1
       let esign = if pos < len && input.get_char(pos).unwrap() == '+' {
         pos = pos + 1
@@ -763,9 +767,7 @@ pub fn double() -> Parser[Double] {
         1
       }
       if pos >= len || !is_digit(input.get_char(pos).unwrap()) {
-        return Err(
-          ParseError::new(input, "double: expected digit in exponent"),
-        )
+        return Err(ParseError::new(input, "double: expected digit in exponent"))
       }
       let exp_start = pos
       while pos < len && is_digit(input.get_char(pos).unwrap()) {

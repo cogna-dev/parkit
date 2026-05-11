@@ -122,16 +122,13 @@ fn hex_digit_value(c : Char) -> Int {
 ///|
 /// Parse exactly 4 hex digits and return the codepoint value (0–65535).
 fn hex4() -> @nom.Parser[Int] {
-  @nom.map(
-    @nom.take_while_m_n(4, 4, @nom.is_hex_digit),
-    fn(s) {
-      let mut v = 0
-      for c in s {
-        v = v * 16 + hex_digit_value(c)
-      }
-      v
-    },
-  )
+  @nom.map(@nom.take_while_m_n(4, 4, @nom.is_hex_digit), fn(s) {
+    let mut v = 0
+    for c in s {
+      v = v * 16 + hex_digit_value(c)
+    }
+    v
+  })
 }
 
 ///|
@@ -152,8 +149,7 @@ fn json_escape() -> @nom.Parser[String] {
       't' => Ok((input[1:].to_string(), "\t"))
       'u' =>
         match hex4().parse(input[1:].to_string()) {
-          Ok((rest, cp)) =>
-            Ok((rest, String::make(1, cp.unsafe_to_char())))
+          Ok((rest, cp)) => Ok((rest, String::make(1, cp.unsafe_to_char())))
           Err(e) => Err(e)
         }
       c =>
@@ -192,10 +188,7 @@ fn json_string_inner() -> @nom.Parser[String] {
         }
       } else if c.to_int() < 0x20 {
         return Err(
-          @nom.ParseError::new(
-            rest,
-            "unescaped control character in string",
-          ),
+          @nom.ParseError::new(rest, "unescaped control character in string"),
         )
       } else {
         buf.write_char(c)
@@ -312,9 +305,7 @@ fn parse_array_impl(input : String) -> @nom.IResult[JsonValue] {
       break
     }
     if r.get_char(0).unwrap() != ',' {
-      return Err(
-        @nom.ParseError::new(r, "expected ',' or ']' in array"),
-      )
+      return Err(@nom.ParseError::new(r, "expected ',' or ']' in array"))
     }
     let after_comma = r[1:].to_string()
     match parse_value_impl(after_comma) {
@@ -366,9 +357,7 @@ fn parse_object_impl(input : String) -> @nom.IResult[JsonValue] {
       break
     }
     if r.get_char(0).unwrap() != ',' {
-      return Err(
-        @nom.ParseError::new(r, "expected ',' or '}' in object"),
-      )
+      return Err(@nom.ParseError::new(r, "expected ',' or '}' in object"))
     }
     let after_comma = r[1:].to_string()
     match parse_kv_pair(after_comma) {
@@ -383,9 +372,7 @@ fn parse_object_impl(input : String) -> @nom.IResult[JsonValue] {
 }
 
 ///|
-fn parse_kv_pair(
-  input : String
-) -> @nom.IResult[(String, JsonValue)] {
+fn parse_kv_pair(input : String) -> @nom.IResult[(String, JsonValue)] {
   let input = match json_ws().parse(input) {
     Ok((r, _)) => r
     Err(_) => input

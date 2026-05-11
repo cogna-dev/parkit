@@ -17,7 +17,7 @@
 //! These benchmarks use the same inputs as the MoonBit benchmarks in
 //! `src/benchmark/bench.mbt`, allowing a direct performance comparison.
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use nom_json::parse;
 
 /// The same 3-object JSON array used in `src/benchmark/bench.mbt`.
